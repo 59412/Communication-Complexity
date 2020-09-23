@@ -1,0 +1,427 @@
+\chapter[CH03]{Distributional communication complexity}
+
+Functions can become much easier to compute in the communication complexity setting when we allow the protocols to make some errors. We can define this formally using the notion of \emph{distributional communication complexity}. We first explore this notion in its most natural setting, which corresponds to the uniform distribution.
+\newpage
+\begin{definition}[Protocol error]
+	Fix any $\epsilon \ge 0$. A protocol $\pi$ \emph{computes} $f$ \emph{with error at most $\epsilon$ under the uniform distribution} if it correctly outputs the value $f(x,y)$ for at least an $1-\epsilon$ fraction of all inputs, i.e., if
+	\[
+	\Pr_{(x,y)}[ \pi(x,y) \neq f(x,y)] \le \epsilon
+	\]
+	when $(x,y)$ is drawn uniformly at random from $\calX \times \calY$.
+\end{definition}
+
+\begin{definition}[Uniform distributional complexity]
+	For any $\epsilon \ge 0$, the \emph{$\epsilon$-error distributional communication complexity} of $f : \mathcal{X} \times \mathcal{Y} \to \{0,1\}$ with respect to the uniform distribution,
+	\[
+	D_\epsilon^{\mathrm{unif}}(f),
+	\]
+	is the minimum communication cost of a protocol that computes $f$ with error at most $\epsilon$ under the uniform distribution.
+\end{definition}
+
+\exercises
+
+\begin{exercise}
+	Show that $D_0^{\mathrm{unif}}(f) = D(f)$ and that for every $\epsilon > 0$, 
+	$D_\epsilon^{\mathrm{unif}}(f) \le D(f)$.
+\end{exercise}
+
+\begin{exercise}
+	Show that every $f : \mathcal{X} \times \mathcal{Y} \to \{0,1\}$ satisfies
+	$D_{1/2}^{\mathrm{unif}}(f) = 0$.
+\end{exercise}
+
+
+\section{Equality III}
+
+The $\epsilon$-error distributional complexity of functions can sometimes be dramatically smaller than their deterministic complexity.
+
+\begin{theorem}
+	For any $\epsilon \ge \frac1{2^n}$, $D_\epsilon^{\mathrm{unif}}(\textsc{Equality}) = 0$.
+\end{theorem}
+
+\begin{proof}
+	Consider a protocol $p$ where Alice and Bob simply agrees on $\Eq (Alice,Bob) = 0$ without sending any bits. \\
+	\\
+	Now note that under uniform distribution, $Pr[x=y] = \frac{2^n}{2^n*2^n} = \frac{1}{2^n}$. Thus $\epsilon = \frac{1}{2^n}$, and since we sent 0 bits, $D_\epsilon^{\mathrm{unif}}(\textsc{Equality}) = 0$.
+\end{proof}
+
+
+\section{Uniform discrepancy}
+
+The \emph{uniform discrepancy} of a function is a different way to measure how large ``nearly $f$-monochromatic'' rectangles can be. For this measure, it is convenient to represent the function with a $\pm1$-valued (instead of $\{0,1\}$-valued) matrix.
+
+\begin{definition}[$\pm 1$-Matrix of a function]
+	The \emph{$\pm 1$-matrix} $M^\pm_f$ corresponding to the function $f : \calX \times \calY \to \{0,1\}$ is the $|\calX| \times |\calY|$-dimensional $\{-1,1\}$-valued matrix with rows indexed by $\calX$ and columns indexed by $\calY$ defined by
+	\[
+	\big(M^{\pm}_f\big)_{x,y} = (-1)^{f(x,y)}
+	\]
+	for every $x \in \calX$ and $y \in \calY$.
+\end{definition}
+
+\begin{definition}[Uniform discrepancy]
+	The \emph{uniform discrepancy} of $f : \calX \times \calY \to \{0,1\}$ is
+	\[
+	\discu(f) = \max_{A \subseteq \calX, B \subseteq \calY} \frac{1}{|\calX| \, |\calY|} \left| \sum_{x \in A, y \in B} \big(M^{\pm}_f\big)_{x,y} \right|.
+	\]
+\end{definition}
+
+We can use the uniform discrepancy to bound deterministic communication complexity.
+
+\begin{theorem}
+	For every function $f : \calX \times \calY \to \{0,1\}$,
+	\[
+	\chi(f) \ge \discu(f)^{-1}
+	\] 
+	and so $D(f) \ge \log_2 \frac1{\discu(f)}$.
+\end{theorem}
+
+\begin{proof}
+	Now think about the maximum f-monochromatic rectangle $R = a \times b$ in $\calX \times \calY$. \\
+	\\
+	$\left|\sum_{x,y \in R} \big(M^{\pm}_f\big)_{x,y}\right| = \left|R\right| = m(f)$ since every entry in $R$ has the same value(-1 or 1). \\
+	Since that $\discu(f) \ge \frac{\left|\sum_{x,y \in R} \big(M^{\pm}_f\big)_{x,y}\right|}{|\calX| |\calY|} = \frac{m(f)}{|\calX| |\calY|}$, thus $\frac{1}{\discu(f)} \leq \frac{|\calX||\calY|}{m(f)}$  \\
+	and by \textbf{Lemma 2} from \textbf{Chapter 2}, we have \\
+	\\
+	$\chi(f) \ge \frac{|\calX| \, |\calY|}{m(f)} \ge \frac{1}{\discu(f)}$ and \\
+	\\
+	$D(f) \ge \log_2 \frac{|\calX| \, |\calY|}{m(f)} \ge \log_2 \frac{1}{\discu(f)}$, \\
+	\\ 
+\end{proof}
+
+
+\section{Uniform discrepancy bound}
+
+We can also use uniform discrepancy to bound the uniform distributional  communication complexity of functions.
+
+\begin{lemma}
+	For every function $f : \calX \times \calY \to \{0,1\}$ and every $0 \le \epsilon < \frac12$, 
+	\[
+	D_\epsilon^{\mathrm{unif}}(f) \ge \log_2 \left( \frac{1-2\epsilon}{\discu(f)} \right).
+	\]
+\end{lemma}
+
+\begin{proof}
+	Since the protocol error is $\epsilon$, we have that if we draw  $x$ and $y$ uniformly at random: \\
+	$\Pr[ \pi(x,y) \neq f(x,y)] \le \epsilon$ and\\
+	$\Pr[ \pi(x,y) = f(x,y)] \ge 1-\epsilon$. \\
+	Thus $\Pr[ \pi(x,y) = f(x,y)] - \Pr[ \pi(x,y) \neq f(x,y)] \ge 1-2\epsilon$. \\
+	\\
+	Now if we divide this value by each rectangle $R$ in the protocol, we will have that \\
+	$\sum_{R} \Pr[select\ x,y] * (\Pr_{(x,y \in R)}[ \pi(x,y) = f(x,y)] - \Pr_{(x,y \in R)}[ \pi(x,y) \neq f(x,y)]) \ge 1-2\epsilon$ \\
+	$\sum_{R} \Pr[select\ x,y] * |\Pr_{(x,y \in R)}[ \pi(x,y) = f(x,y)] - \Pr_{(x,y \in R)}[ \pi(x,y) \neq f(x,y)]| \ge 1-2\epsilon$ \\
+	\\
+	Note that the term  $\Pr[select\ x,y] * |\Pr_{(x,y \in R)}[ \pi(x,y) = f(x,y)] - \Pr_{(x,y \in R)}[ \pi(x,y) \neq f(x,y)]|$ equals to $\frac{\left| \sum_{x,y \in R} \big(M^{\pm}_f\big)_{x,y} \right|}{|\calX||\calY|}$ since we can use one of $(-1,1)$ to represent the correct value and the other for incorrect ones, and the probability of selecting each one is $\frac{1}{|\calX||\calY|}$. Results will be the same since we are using absolute value. \\
+	\\
+	Thus, we have that \\
+	\\
+	$\sum_{R} \frac{\left| \sum_{x,y \in R} \big(M^{\pm}_f\big)_{x,y} \right|}{|\calX||\calY|} \ge 1-2\epsilon$\\
+	\\
+	$\sum_{R} \discu(f) \ge 1-2\epsilon$\\
+	\\
+	Say there are $\alpha$ rectangles in the protocol, then
+	$\alpha * \discu(f) \ge 1-2\epsilon$ \\ 
+	\\
+	$\alpha \ge \frac{1-2\epsilon}{\discu(f)}$ \\
+	\\
+	Then\\
+	$D_\epsilon^{\mathrm{unif}}(f) \ge \log_2 \left( \frac{1-2\epsilon}{\discu(f)} \right)$, since there are at least $\frac{1-2\epsilon}{\discu(f)}$ rectangles in any protocol.
+\end{proof}
+
+
+\section{Inner product III}
+
+The discrepancy method can be used to give optimal bounds on the distributional communication complexity of the inner product function over the uniform distribution.
+
+\begin{theorem}
+	$\discu(\IP) \le 2^{-n/2}$ and, as a result, $D_\epsilon^{\mathrm{unif}}(\IP) \ge \Omega(n)$ for every $\epsilon < \frac12$.
+\end{theorem}
+
+\begin{proof}
+	Consider the $\pm1$-Matrix of Inner Product function $M_{ip}$. Now calculate the value $M_{ip}M_{ip}^t$, we can see that the result is a matrix full of $1$ since the inner product function is commutative which means $M_{ip(x,y)} = M_{ip(y,x)}$, thus every entry of $M_{ip}$ is either $1*1$ or $-1*-1$. Since this is equivalent to the identity matrix, we conclude that $M_{ip}$ is an orthogonal matrix. \\
+	\\
+	Now consider any rectangle in $\calX \times \calY$, say $R = a \times b$. We calculate the discrepancy of $R$, say this value is $d$. \\
+	\\
+	$d = \frac{1}{|\calX||\calY|}|\sum_{x \in a,y \in b} \big(M_{ip}\big)_{x,y}|$ \\
+	\\
+	$= \frac{1}{2^n*2^n}1_a^tM_{ip}1_b$\\
+	\\
+	$\leq \frac{1}{2^{2n}}\left\lVert 1_a\right\rVert \left\lVert M_{ip}1_b\right\rVert$\\
+	\\
+	$= \frac{1}{2^{2n}}\sqrt{1_a1_a}\sqrt{M_{ip}1_bM_{ip}1_b}$\\
+	\\
+	$\leq \frac{1}{2^{2n}}\sqrt{2^n}\sqrt{M_{ip}1_bM_{ip}1_b}$ \\
+	\\
+	$= \frac{1}{2^{2n}}\sqrt{2^n}\sqrt{1_b^tM_{ip}^tM_{ip}1_b}$ \\
+	\\
+	$\leq \frac{1}{2^{2n}}\sqrt{2^n}\sqrt{1_b^t2^nI1_b}$\\ 
+	\\
+	$\leq \frac{1}{2^{2n}}\sqrt{2^n}\sqrt{2^n*2^n}$\\
+	\\
+	$= \frac{1}{2^{n/2}} = 2^{-n/2}$\\
+	\\
+	Since discrenpancy of any rectangle $\leq 2^{-n/2}$, we conclude that $\discu(IP) \leq 2^{-n/2}$, and \textbf{Lemma 1}, $D_\epsilon^{\mathrm{unif}}(\IP) \ge \log_2(\frac{1-2\epsilon}{\discu(IP)}) \ge \log_2(\frac{1-2\epsilon}{2^{-n/2}}) \ge \Omega(n)$
+\end{proof} 
+
+
+\section{Distributional complexity}
+
+The definitions we have seen so far in this chapter all generalize to arbitrary distributions over the domain of the function.
+
+\begin{definition}[Protocol error]
+	Fix any $\epsilon \ge 0$. A protocol \emph{computes} $f : \calX \times \calY \to \{0,1\}$ \emph{with error at most $\epsilon$ under the distribution $\mu$ on $\calX \times \calY$} if it correctly outputs the value $f(x,y)$ for at least a $1-\epsilon$ measure of all inputs in $\mu$, i.e., if
+	\[
+	\Pr_{(x,y) \sim \mu}[ \pi(x,y) \neq f(x,y) ] \le \epsilon.
+	\]
+\end{definition}
+
+\begin{definition}[Distributional complexity]
+	For any $\epsilon \ge 0$, the \emph{$\epsilon$-error distributional communication complexity} of $f : \calX \times \calY \to \{0,1\}$ with respect to the distribution $\mu$ on $\calX \times \calY$,
+	\[
+	D_\epsilon^{\mu}(f),
+	\]
+	is the minimum communication cost of a protocol that computes $f$ with error at most $\epsilon$ under the distribution $\mu$.
+\end{definition}
+
+\begin{definition}[$\mu$-Discrepancy]
+	For any distribution $\mu$ on $\calX \times \calY$, 
+	the \emph{$\mu$-discrepancy} of $f : \calX \times \calY \to \{0,1\}$ is
+	\[
+	\disc_\mu(f) = \max_{A \subseteq \calX, B \subseteq \calY} 
+	\left| \mu\big( (A \times B) \cap f^{-1}(0) \big) - \mu\big( (A \times B) \cap f^{-1}(1)\big) \right|.
+	\]
+\end{definition}
+
+\begin{theorem}
+	For every function $f : \calX \times \calY \to \{0,1\}$ and every distribution $\mu$ over $\calX \times \calY$, 
+	\[
+	\chi(f) \ge \disc_\mu(f)^{-1}
+	\] 
+	and so $D(f) \ge \log_2 \frac1{\disc_\mu(f)}$.
+\end{theorem}
+
+\begin{proof}
+	Consider the f-monochromatic rectangle $R = a \times b$ in $\calX \times \calY$ with maximum size under distribution $\mu$, like \textbf{Definition 3} from \textbf{Chapter 2} defined, we say the size of $R$ is $m_{\mu}(f)$.\\
+	\\
+	Now consider the $\mu$-discrepancy of $R$, since the values in $R$ are of the same, $\mu$-discrepancy of $R$ should be equal to $m_{\mu}(f)$. And we have $\disc_\mu(f) \ge \mu$-discrepancy of $R \ge m_{\mu}(f)$.\\
+	\\
+	By \textbf{Lemma 3} from \textbf{Chapter 2}, we have $\chi(f) \ge \frac{1}{m_\mu(f)} \ge \disc_\mu(f)^{-1}$,\\
+	\\
+	And $D(f) \ge \log_2 \frac{1}{m_\mu(f)} \ge \log_2 \disc_\mu(f)^{-1}$
+	
+\end{proof}
+
+\exercises
+
+\begin{exercise}
+	Show that when $\mu$ is the uniform distribution over $\calX \times \calY$, the definitions of $\mu$-discrepancy and uniform discrepancy are equivalent.
+\end{exercise}
+
+\begin{exercise}
+	Show that for every distribution $\mu$, $D^\mu_\epsilon(f) \le D(f)$.
+\end{exercise}
+
+
+\section{Discrepancy bound}
+
+The $\mu$-discrepancy of a function can be used to give lower bounds on its $\mu$-distributional communication complexity.
+
+\begin{lemma}
+	For every function $f : \calX \times \calY \to \{0,1\}$, every distribution $\mu$ on $\calX \times \calY$, and every $0 \le \epsilon < \frac12$,
+	\[
+	D_\epsilon^{\mu}(f) \ge \log_2 \left( \frac{1-2\epsilon}{\disc_\mu(f)} \right).
+	\]
+\end{lemma}
+
+\begin{proof}
+	Since the protocol error is $\epsilon$, we have that if we draw  $x$ and $y$ by a distribution $\mu$: \\
+	$\Pr[ \pi(x,y) \neq f(x,y)] \le \epsilon$ and\\
+	$\Pr[ \pi(x,y) = f(x,y)] \ge 1-\epsilon$. \\
+	Thus $\Pr[ \pi(x,y) = f(x,y)] - \Pr[ \pi(x,y) \neq f(x,y)] \ge 1-2\epsilon$. \\
+	\\
+	Now if we divide this value by each rectangle $R$ in the protocol, we will have that \\
+	$\sum_{R} \Pr[select\ x,y] * (\Pr_{(x,y \in R)}[ \pi(x,y) = f(x,y)] - \Pr_{(x,y \in R)}[ \pi(x,y) \neq f(x,y)]) \ge 1-2\epsilon$ \\
+	$\sum_{R} \Pr[select\ x,y] * |\Pr_{(x,y \in R)}[ \pi(x,y) = f(x,y)] - \Pr_{(x,y \in R)}[ \pi(x,y) \neq f(x,y)]| \ge 1-2\epsilon$ \\
+	\\
+	Note that the term  $\Pr[select\ x,y] * |\Pr_{(x,y \in R)}[ \pi(x,y) = f(x,y)] - \Pr_{(x,y \in R)}[ \pi(x,y) \neq f(x,y)]|$ equals to ${\left| \sum_{x,y \in R} \mu(x,y)\big(M^{\pm}_f\big)_{x,y} \right|}$ since we can use one of $(-1,1)$ to represent the correct value and the other for incorrect ones, and the probability of selecting each one is $\mu(x,y)$. Results will be the same since we are using absolute value. \\
+	\\
+	Thus, we have that \\
+	\\
+	$\sum_{R} {\left| \sum_{x,y \in R} \mu(x,y)\big(M^{\pm}_f\big)_{x,y} \right|} \ge 1-2\epsilon$\\
+	\\
+	$\sum_{R} \disc_\mu(f) \ge 1-2\epsilon$\\
+	\\
+	Say there are $\alpha$ rectangles in the protocol, then
+	$\alpha * \disc_\mu(f) \ge 1-2\epsilon$ \\ 
+	\\
+	$\alpha \ge \frac{1-2\epsilon}{\disc_\mu(f)}$ \\
+	\\
+	Then\\
+	$D_\epsilon^{\mathrm{unif}}(f) \ge \log_2 \left( \frac{1-2\epsilon}{\disc_\mu(f)} \right)$, since there are at least $\frac{1-2\epsilon}{\disc_\mu(f)}$ rectangles in any protocol.
+\end{proof}
+
+
+\section{Equality IV}
+
+Using the discrepancy bound, we can show that there are distributions for which the equality function requires Alice and Bob to exchange \emph{some} bits of communication to obtain a non-trivial error.
+
+\begin{theorem}
+	There exists a distribution $\mu$ over $\{0,1\}^n \times \{0,1\}^n$ for which 
+	$
+	\disc_\mu(\Eq) \leq \frac18*\frac{2^n}{2^n-1}
+	$
+	and so
+	\[
+	D^\mu_\epsilon(\Eq) \ge 1
+	\]
+	for every $\epsilon \le \frac38$.
+\end{theorem}
+
+\begin{proof}
+	Consider the following distribution $\mu$: \\
+	\\
+	$\mu(x,y) = \frac{1/2}{2^n} = \frac{1}{2^{n+1}}$ if $EQ(x,y) = 1$,\\
+	$\mu(x,y) = \frac{1/2}{2^{2n}-2^n} = \frac{1}{2^{2n+1}-2^{n+1}}$ otherwise. \\
+	\\
+	Now we calculate the $\mu$-discrepancy of $EQ$. \\
+	\\
+	First think of a rectangle containing total of $i$ 1's, then by the structure of rectangles from $EQ(x,y)$, we know that it has at least $(i-1)i$ 0's. This gives the discrepancy of \\
+	\\
+	$\frac{(i-1)i}{2^{2n+1}-2^{n+1}}-\frac{i}{2^{n+1}} = \frac{i(i-2^n)}{2^{n+1}(2^n-1)}$ Note the value is negative.\\
+	\\
+	Since choosing $i=2^{n-1}$ will make this term has the maximum absolute value, we have discrepancy\\
+	\\
+	$\leq |\frac{2^{n-1}(2^{n-1}-2^n)}{2^{n+1}(2^n-1)}| = \frac14|\frac{2^{n-1}-2^{n}}{2^{n}-1}| \leq \frac18|\frac{2^{n}-2^{n+1}}{2^{n}-1}| \leq \frac18*\frac{2^n}{2^n-1}$\\
+	\\
+	Now think of a rectangle containing only 0's, the largest possible one should be of size $2^{n-1}*2^{n-1}$ since the column and rows cannot share any index, and to maximize such a rectangle is to make it a square. \\ 
+	\\
+	For this rectangle, the $\mu$-discrepancy is easy to calculate: \\
+	\\
+	$2^{n-1}*2^{n-1}*\frac{1}{2^{2n+1}-2^{n+1}} = \frac{2^{2n-2}}{2^{2n+1}-2^{n+1}} = \frac18*\frac{2^n}{2^n-1}$\\
+	\\
+	Now consider any other rectangle, they must be a combination of the above two cases:\\
+	\\
+	For the rows with 1, they form a square with potentially a tailing rectangle full of 0's. The rest of the rows forms a rectangle filled with 0's. Note that adding these discrepancy yield a smaller value since for the above two cases we have opposite signs. Thus for any rectangle in $EQ(x,y)$, we have $\mu$-discrepancy $\leq \frac18*\frac{2^n}{2^n-1}$. In other words, $\disc_\mu(\Eq) \leq \frac18*\frac{2^n}{2^n-1}$. And plugging this result into \textbf{Lemma 2} yields $D^\mu_\epsilon(\Eq) \ge 1$.
+\end{proof}
+
+
+
+\section{Equality V}
+
+Show that the bound in the last section is essentially tight in that the distributional communication complexity of the equality function is constant when $\epsilon$ is a positive constant.
+
+\begin{theorem}
+	For every distribution $\mu$ over $\{0,1\}^n \times \{0,1\}^n$,
+	\[
+	D^\mu_{1/4}(\Eq) = O(1).
+	\]
+\end{theorem}
+
+\begin{proof}
+	If Alice and Bob shares randomness, then we can use the following protocol:\\
+	\\
+	Alice and Bob agree on two randomly selected subsets of $n$-bit binary string, then Alice XORs bits from each subset together. Then send the two results to Bob. Bob calculate the sum of same subsets and compare them to the results Alice sent, then:\\ 
+	\\
+	If both bits equal to Alice's, return 1 to Alice\\
+	\\
+	Otherwise, return 0 to Alice.\\
+	\\
+	Note this protocol sends only 3 bits, so the distribution communication complexity is $O(1)$. Now we calculate the error probability: \\
+	\\
+	Let $h_s(x)$ be one of the result from Alice using subset$s$, $h_s(y)$ be the result from same subset from Bob. Assume $x \neq y$. \\
+	Let E be the event where $h_s(x) = h_s(y)$, let F be the event where $h_{s\ without\{i\}}(x)=h_{s\ without\{i\}}(y)$.\\
+	\\
+	$Pr[E] = Pr[F]*Pr[E|F] + Pr[\overline{F}]*Pr[E|\overline{F}]$\\
+	\\
+	$=Pr[F]*Pr[i \in s] + Pr[\overline{F}]*Pr[i \in s]$\\
+	\\
+	$=Pr[F]*\frac12+Pr[\overline{F}]*\frac12 = \frac12$\\
+	\\
+	And the probability of both time fail is $\frac14$. Since we have correct result with probability 1 when $x = y$ and probability $\frac34$ when $x \neq y$, we have $\epsilon = \frac14$.\\ 
+	\\
+	Thus $D^\mu_{1/4}(\Eq) = O(1)$.
+\end{proof}
+
+
+
+\section{Corruption bound}
+
+The \emph{corruption bound} is another powerful technique for proving lower bounds in distributional communication complexity.
+
+\begin{lemma}
+	Fix a function $f : \calX \times \calY \to \{0,1\}$ and a distribution
+	$\mu$ on $\calX \times \calY$.
+	If there exist parameters $\alpha, \beta > 0$ for which
+	every rectangle $R \subseteq \calX \times \calY$ satisfies 
+	\[
+	\mu(R \cap f^{-1}(0)) \ge \alpha \cdot \mu(R) - \beta
+	\]
+	then
+	\[
+	D^\mu_\epsilon(f) \ge \log\left( \frac{\alpha \cdot \mu(f^{-1}(1)) - \epsilon}{\beta}\right).
+	\]
+\end{lemma}
+
+\begin{proof}
+	First we sum up $\mu(R \cap f^{-1}(0))$ for all rectangles $R$ in a protocol:\\
+	\\
+	$\sum_R\mu(R \cap f^{-1}(0))$\\
+	\\
+	$= \mu(f^{-1}(0))$\\
+	\\
+	$\ge \sum_R \alpha \cdot \mu(R) - \beta$\\
+	\\
+	$= \sum_R \alpha \cdot (\mu(R \cap f^{-1}(0))+\mu(R \cap f^{-1}(1))) - \beta $ if there are $d$ rectangles\\
+	\\
+	$= \alpha \mu(f^{-1}(0))+\alpha \mu(f^{-1}(1)) - d*\beta$\\
+	\\
+	Now since we have $\mu(f^{-1}(0)) \ge \alpha \mu(f^{-1}(0))+\alpha \mu(f^{-1}(1)) - d*\beta$ \\
+	\\
+	$d \ge \frac{(\alpha-1) \mu(f^{-1}(0))+\alpha \mu(f^{-1}(1))}{\beta}$\\
+	\\
+	$\ge \frac{\alpha \mu(f^{-1}(1))}{\beta}$ since $\alpha \leq 1$ \\
+	\\
+	$\ge \frac{\alpha \mu(f^{-1}(1))-\epsilon}{\beta}$\\
+	\\
+	And since the number of rectangles is at least $\frac{\alpha \mu(f^{-1}(1))-\epsilon}{\beta}$, $D^\mu_\epsilon(f) \ge \log\left( \frac{\alpha \cdot \mu(f^{-1}(1)) - \epsilon}{\beta}\right)$.
+\end{proof}
+
+
+
+\section{Set Disjointness II}
+
+The corruption bound can be used to prove a strong lower bound on the distributional communication complexity of the set disjointness function. The key claim that is used to obtain this result is the following combinatorial statement.
+
+\begin{proposition}
+	For every $\alpha>0$, there exists a $\delta>0$ such that every rectangle $R = A \times B \subseteq 2^{[n]} \times 2^{[n]}$
+	that satisfies 
+	\[
+	\Pr_{(S,T) \in R}[ S \cap T = \emptyset ] \ge 1-\alpha
+	\]
+	has size bounded by
+	\[
+	|A| \le 2^{-\delta \sqrt{n}} \binom{n}{\sqrt{n}}
+	\qquad \mbox{or} \qquad
+	|B| \le 2^{-\delta \sqrt{n}} \binom{n}{\sqrt{n}}.
+	\]
+\end{proposition}
+
+Use the claim to complete the lower bound on the communication complexity of the set disjointness function.
+
+\begin{theorem}
+	Let $\mu$ be the uniform distribution on pairs $(S,T) \in 2^{[n]} \times 2^{[n]}$ that satisfy $|S| = |T| = \sqrt{n}$. Then
+	\[
+	D_\epsilon^{\mu}(\textsc{Disj}) \ge \Omega(\sqrt{n}).
+	\]
+\end{theorem}
+
+\begin{proof}
+	First we consider the value of $\mu(R \cap f^{-1}(0))$:\\
+	\\
+	$\mu(R \cap DISJ^{-1}(0)) = \mu(R) \cdot Pr[DISJ(x,y) = 0|x,y \in R] \ge \mu(R) \cdot \alpha \ge \alpha \cdot \mu(R) - \beta$ for any $\beta > 0$ if we use the same $\alpha$ for both equations.\\
+	\\
+	Thus, by \textbf{Lemma 3}, we have that $D^\mu_\epsilon(DISJ) \ge \log\left( \frac{\alpha \cdot \mu(DISJ^{-1}(1)) - \epsilon}{\beta}\right)$.\\ 
+	\\
+	By \textbf{Proposition 1} we have that $|S| = |T| = \sqrt{n}$, so we can conclude that \\
+	\\
+	$D^\mu_\epsilon(DISJ) \ge \log \frac{\alpha \cdot 2^{\sqrt{n}} - \epsilon}{\beta} = \Omega(\sqrt{n})$
+\end{proof}

@@ -1,0 +1,1563 @@
+This is pdfTeX, Version 3.14159265-2.6-1.40.19 (MiKTeX 2.9.6930 64-bit) (preloaded format=pdflatex 2019.1.14)  6 MAR 2020 16:23
+entering extended mode
+**./Book.tex
+(Book.tex
+LaTeX2e <2018-12-01>
+("C:\Users\zongh\AppData\Local\Programs\MiKTeX 2.9\tex/latex/amscls\amsbook.cls
+"
+Document Class: amsbook 2017/10/31 v2.20.4
+\linespacing=\dimen102
+\normalparindent=\dimen103
+\normaltopskip=\skip41
+
+("C:\Users\zongh\AppData\Local\Programs\MiKTeX 2.9\tex/latex/amsmath\amsmath.st
+y"
+Package: amsmath 2018/12/01 v2.17b AMS math features
+\@mathmargin=\skip42
+
+For additional information on amsmath, use the `?' option.
+
+("C:\Users\zongh\AppData\Local\Programs\MiKTeX 2.9\tex/latex/amsmath\amstext.st
+y"
+Package: amstext 2000/06/29 v2.01 AMS text
+
+("C:\Users\zongh\AppData\Local\Programs\MiKTeX 2.9\tex/latex/amsmath\amsgen.sty
+"
+File: amsgen.sty 1999/11/30 v2.0 generic functions
+\@emptytoks=\toks14
+\ex@=\dimen104
+))
+("C:\Users\zongh\AppData\Local\Programs\MiKTeX 2.9\tex/latex/amsmath\amsbsy.sty
+"
+Package: amsbsy 1999/11/29 v1.2d Bold Symbols
+\pmbraise@=\dimen105
+)
+("C:\Users\zongh\AppData\Local\Programs\MiKTeX 2.9\tex/latex/amsmath\amsopn.sty
+"
+Package: amsopn 2016/03/08 v2.02 operator names
+)
+\inf@bad=\count80
+LaTeX Info: Redefining \frac on input line 223.
+\uproot@=\count81
+\leftroot@=\count82
+LaTeX Info: Redefining \overline on input line 385.
+\classnum@=\count83
+\DOTSCASE@=\count84
+LaTeX Info: Redefining \ldots on input line 482.
+LaTeX Info: Redefining \dots on input line 485.
+LaTeX Info: Redefining \cdots on input line 606.
+\Mathstrutbox@=\box27
+\strutbox@=\box28
+\big@size=\dimen106
+LaTeX Font Info:    Redeclaring font encoding OML on input line 729.
+LaTeX Font Info:    Redeclaring font encoding OMS on input line 730.
+\macc@depth=\count85
+\c@MaxMatrixCols=\count86
+\dotsspace@=\muskip10
+\c@parentequation=\count87
+\dspbrk@lvl=\count88
+\tag@help=\toks15
+\row@=\count89
+\column@=\count90
+\maxfields@=\count91
+\andhelp@=\toks16
+\eqnshift@=\dimen107
+\alignsep@=\dimen108
+\tagshift@=\dimen109
+\tagwidth@=\dimen110
+\totwidth@=\dimen111
+\lineht@=\dimen112
+\@envbody=\toks17
+\multlinegap=\skip43
+\multlinetaggap=\skip44
+\mathdisplay@stack=\toks18
+LaTeX Info: Redefining \[ on input line 2844.
+LaTeX Info: Redefining \] on input line 2845.
+)
+LaTeX Font Info:    Try loading font information for U+msa on input line 377.
+
+("C:\Users\zongh\AppData\Local\Programs\MiKTeX 2.9\tex/latex/amsfonts\umsa.fd"
+File: umsa.fd 2013/01/14 v3.01 AMS symbols A
+)
+("C:\Users\zongh\AppData\Local\Programs\MiKTeX 2.9\tex/latex/amsfonts\amsfonts.
+sty"
+Package: amsfonts 2013/01/14 v3.01 Basic AMSFonts support
+\symAMSa=\mathgroup4
+\symAMSb=\mathgroup5
+LaTeX Font Info:    Overwriting math alphabet `\mathfrak' in version `bold'
+(Font)                  U/euf/m/n --> U/euf/b/n on input line 106.
+)
+\copyins=\insert199
+\abstractbox=\box29
+\listisep=\skip45
+\c@part=\count92
+\c@chapter=\count93
+\c@section=\count94
+\c@subsection=\count95
+\c@subsubsection=\count96
+\c@paragraph=\count97
+\c@subparagraph=\count98
+\c@figure=\count99
+\c@table=\count100
+\abovecaptionskip=\skip46
+\belowcaptionskip=\skip47
+\captionindent=\dimen113
+\thm@style=\toks19
+\thm@bodyfont=\toks20
+\thm@headfont=\toks21
+\thm@notefont=\toks22
+\thm@headpunct=\toks23
+\thm@preskip=\skip48
+\thm@postskip=\skip49
+\thm@headsep=\skip50
+\dth@everypar=\toks24
+)
+("C:\Users\zongh\AppData\Local\Programs\MiKTeX 2.9\tex/latex/amsfonts\amssymb.s
+ty"
+Package: amssymb 2013/01/14 v3.01 AMS font symbols
+)
+("C:\Users\zongh\AppData\Local\Programs\MiKTeX 2.9\tex/latex/xcolor\xcolor.sty"
+Package: xcolor 2016/05/11 v2.12 LaTeX color extensions (UK)
+
+("C:\Users\zongh\AppData\Local\Programs\MiKTeX 2.9\tex/latex/graphics-cfg\color
+.cfg"
+File: color.cfg 2016/01/02 v1.6 sample color configuration
+)
+Package xcolor Info: Package option `usenames' ignored on input line 216.
+Package xcolor Info: Driver file: pdftex.def on input line 225.
+
+("C:\Users\zongh\AppData\Local\Programs\MiKTeX 2.9\tex/latex/graphics-def\pdfte
+x.def"
+File: pdftex.def 2018/01/08 v1.0l Graphics/color driver for pdftex
+)
+Package xcolor Info: Model `cmy' substituted by `cmy0' on input line 1348.
+Package xcolor Info: Model `hsb' substituted by `rgb' on input line 1352.
+Package xcolor Info: Model `RGB' extended on input line 1364.
+Package xcolor Info: Model `HTML' substituted by `rgb' on input line 1366.
+Package xcolor Info: Model `Hsb' substituted by `hsb' on input line 1367.
+Package xcolor Info: Model `tHsb' substituted by `hsb' on input line 1368.
+Package xcolor Info: Model `HSB' substituted by `hsb' on input line 1369.
+Package xcolor Info: Model `Gray' substituted by `gray' on input line 1370.
+Package xcolor Info: Model `wave' substituted by `hsb' on input line 1371.
+)
+("C:\Users\zongh\AppData\Local\Programs\MiKTeX 2.9\tex/latex/url\url.sty"
+\Urlmuskip=\muskip11
+Package: url 2013/09/16  ver 3.4  Verb mode for urls, etc.
+)
+("C:\Users\zongh\AppData\Local\Programs\MiKTeX 2.9\tex/latex/preprint\fullpage.
+sty"
+Package: fullpage 1999/02/23 1.1 (PWD)
+\FP@margin=\skip51
+)
+("C:\Users\zongh\AppData\Local\Programs\MiKTeX 2.9\tex/latex/doublestroke\dsfon
+t.sty"
+Package: dsfont 1995/08/01 v0.1 Double stroke roman fonts
+)
+\c@theorem=\count101
+\c@exercise=\count102
+\c@problem=\count103
+\c@challenge=\count104
+\c@open=\count105
+ (Book.aux (Book-Ch1.aux) (Book-Ch2.aux) (Book-Ch3.aux) (Book-Ch4.aux)
+(Book-Ch5.aux) (Book-Ch6.aux) (Book-Ch7.aux) (Book-Notes.aux))
+\openout1 = `Book.aux'.
+
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 55.
+LaTeX Font Info:    ... okay on input line 55.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 55.
+LaTeX Font Info:    ... okay on input line 55.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 55.
+LaTeX Font Info:    ... okay on input line 55.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 55.
+LaTeX Font Info:    ... okay on input line 55.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 55.
+LaTeX Font Info:    ... okay on input line 55.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 55.
+LaTeX Font Info:    ... okay on input line 55.
+LaTeX Font Info:    Try loading font information for U+msa on input line 55.
+
+("C:\Users\zongh\AppData\Local\Programs\MiKTeX 2.9\tex/latex/amsfonts\umsa.fd"
+File: umsa.fd 2013/01/14 v3.01 AMS symbols A
+)
+LaTeX Font Info:    Try loading font information for U+msb on input line 55.
+("C:\Users\zongh\AppData\Local\Programs\MiKTeX 2.9\tex/latex/amsfonts\umsb.fd"
+File: umsb.fd 2013/01/14 v3.01 AMS symbols B
+)
+("C:\Users\zongh\AppData\Local\Programs\MiKTeX 2.9\tex/context/base\supp-pdf.mk
+ii"
+[Loading MPS to PDF converter (version 2006.09.02).]
+\scratchcounter=\count106
+\scratchdimen=\dimen114
+\scratchbox=\box30
+\nofMPsegments=\count107
+\nofMParguments=\count108
+\everyMPshowfont=\toks25
+\MPscratchCnt=\count109
+\MPscratchDim=\dimen115
+\MPnumerator=\count110
+\makeMPintoPDFobject=\count111
+\everyMPtoPDFconversion=\toks26
+)
+LaTeX Font Info:    Try loading font information for OMS+cmr on input line 81.
+ ("C:\Users\zongh\AppData\Local\Programs\MiKTeX 2.9\tex/latex/base\omscmr.fd"
+File: omscmr.fd 2014/09/29 v2.5h Standard LaTeX font definitions
+)
+LaTeX Font Info:    Font shape `OMS/cmr/m/sc' in size <10.95> not available
+(Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 81.
+LaTeX Font Info:    Font shape `OMS/cmr/m/n' in size <10.95> not available
+(Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 81.
+[0
+
+
+{C:/Users/zongh/AppData/Local/MiKTeX/2.9/pdftex/config/pdftex.map}]
+Contents
+(Book.toc [1
+
+
+
+
+])
+\tf@toc=\write3
+\openout3 = `Book.toc'.
+
+ [2]
+\openout2 = `Book-Ch1.aux'.
+
+ (Book-Ch1.tex
+Chapter 1
+[1
+
+
+
+
+
+] [2] [3]) [4]
+\openout2 = `Book-Ch2.aux'.
+
+ (Book-Ch2.tex
+Chapter 2
+[5
+
+
+
+
+]
+Underfull \hbox (badness 10000) in paragraph at lines 28--33
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 28--33
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 49--53
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 57--60
+
+ []
+
+[6]
+Underfull \hbox (badness 10000) in paragraph at lines 85--93
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 85--93
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 85--93
+
+ []
+
+[7]
+Underfull \hbox (badness 10000) in paragraph at lines 140--143
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 156--165
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 156--165
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 156--165
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 192--195
+
+ []
+
+[8]
+Underfull \hbox (badness 10000) in paragraph at lines 207--218
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 207--218
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 207--218
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 252--262
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 252--262
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 252--262
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 252--262
+
+ []
+
+[9]
+Underfull \hbox (badness 10000) in paragraph at lines 291--296
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 291--296
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 309--314
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 309--314
+
+ []
+
+[10]) [11]
+\openout2 = `Book-Ch3.aux'.
+
+ (Book-Ch3.tex [12
+
+
+
+
+]
+Chapter 3
+[13]
+Underfull \hbox (badness 10000) in paragraph at lines 43--46
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 79--89
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 79--89
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 79--89
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 79--89
+
+ []
+
+[14]
+Underfull \hbox (badness 10000) in paragraph at lines 104--128
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 104--128
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 104--128
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 104--128
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 104--128
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 104--128
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 104--128
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 104--128
+
+ []
+
+[15]
+Underfull \hbox (badness 10000) in paragraph at lines 140--163
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 140--163
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 140--163
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 140--163
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 140--163
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 140--163
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 140--163
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 140--163
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 140--163
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 140--163
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 140--163
+
+ []
+
+[16]
+Underfull \hbox (badness 10000) in paragraph at lines 203--210
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 203--210
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 203--210
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 236--260
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 236--260
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 236--260
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 236--260
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 236--260
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 236--260
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 236--260
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 236--260
+
+ []
+
+[17]
+Underfull \hbox (badness 10000) in paragraph at lines 280--304
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 280--304
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 280--304
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 280--304
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 280--304
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 280--304
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 280--304
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 280--304
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 280--304
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 280--304
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 280--304
+
+ []
+
+[18]
+Underfull \hbox (badness 10000) in paragraph at lines 320--342
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 320--342
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 320--342
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 320--342
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 320--342
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 320--342
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 320--342
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 320--342
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 320--342
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 320--342
+
+ []
+
+[19]
+Underfull \hbox (badness 10000) in paragraph at lines 365--386
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 365--386
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 365--386
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 365--386
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 365--386
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 365--386
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 365--386
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 365--386
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 365--386
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 365--386
+
+ []
+
+[20]
+Underfull \hbox (badness 10000) in paragraph at lines 418--427
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 418--427
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 418--427
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 418--427
+
+ []
+
+) [21]
+\openout2 = `Book-Ch4.aux'.
+
+ (Book-Ch4.tex [22
+
+
+
+
+]
+Chapter 4
+[23]
+Underfull \hbox (badness 10000) in paragraph at lines 54--57
+
+ []
+
+[24]
+LaTeX Font Info:    Try loading font information for U+dsrom on input line 83.
+
+("C:\Users\zongh\AppData\Local\Programs\MiKTeX 2.9\tex/latex/doublestroke\udsro
+m.fd"
+File: Udsrom.fd 1995/08/01 v0.1 Double stroke roman font definitions
+)
+Underfull \hbox (badness 10000) in paragraph at lines 74--88
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 74--88
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 74--88
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 74--88
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 113--127
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 113--127
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 113--127
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 113--127
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 113--127
+
+ []
+
+[25]
+Overfull \hbox (8.57372pt too wide) in paragraph at lines 152--157
+[]\OT1/cmr/m/n/10.95 Using the same pro-to-col and proof from Ques-tion \OT1/cm
+r/bx/n/10.95 Equal-ity V\OT1/cmr/m/n/10.95 , we have that $\OML/cmm/m/it/10.95 
+D[]\OT1/cmr/m/n/10.95 (\OML/cmm/m/it/10.95 EQ\OT1/cmr/m/n/10.95 ) =
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 152--157
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 152--157
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 180--192
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 180--192
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 180--192
+
+ []
+
+[26]
+Underfull \hbox (badness 10000) in paragraph at lines 224--241
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 224--241
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 224--241
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 224--241
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 224--241
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 224--241
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 224--241
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 224--241
+
+ []
+
+[27]
+Underfull \hbox (badness 10000) in paragraph at lines 298--312
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 298--312
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 298--312
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 298--312
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 298--312
+
+ []
+
+[28]
+Underfull \hbox (badness 10000) in paragraph at lines 333--338
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 333--338
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 333--338
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 359--366
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 359--366
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 359--366
+
+ []
+
+[29]) [30]
+\openout2 = `Book-Ch5.aux'.
+
+ (Book-Ch5.tex
+Chapter 5
+[31
+
+
+
+
+]
+Overfull \hbox (10.37634pt too wide) in paragraph at lines 47--48
+[]\OT1/cmr/m/it/10.95 Whenever $\OML/cmm/m/it/10.95 Z[] \OT1/cmr/m/n/10.95 = \O
+ML/cmm/m/it/10.95 f\OT1/cmr/m/n/10.95 (\OML/cmm/m/it/10.95 Z\OT1/cmr/m/n/10.95 
+)$ \OT1/cmr/m/it/10.95 is de-ter-mined by $\OML/cmm/m/it/10.95 Z$\OT1/cmr/m/it/
+10.95 , $\OML/cmm/m/it/10.95 I\OT1/cmr/m/n/10.95 (\OML/cmm/m/it/10.95 Z[]\OT1/c
+mr/m/n/10.95 ; \OML/cmm/m/it/10.95 W\OT1/cmr/m/n/10.95 ) \OMS/cmsy/m/n/10.95  
+\OML/cmm/m/it/10.95 I\OT1/cmr/m/n/10.95 (\OML/cmm/m/it/10.95 Z\OT1/cmr/m/n/10.9
+5 ; \OML/cmm/m/it/10.95 W\OT1/cmr/m/n/10.95 )$\OT1/cmr/m/it/10.95 . 
+ []
+
+[32]
+Underfull \hbox (badness 10000) in paragraph at lines 95--100
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 95--100
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 117--122
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 117--122
+
+ []
+
+[33]
+Underfull \hbox (badness 10000) in paragraph at lines 138--147
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 138--147
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 138--147
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 138--147
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 163--177
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 163--177
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 163--177
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 163--177
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 163--177
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 163--177
+
+ []
+
+[34]
+Underfull \hbox (badness 10000) in paragraph at lines 211--226
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 211--226
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 211--226
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 211--226
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 242--259
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 242--259
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 242--259
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 242--259
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 242--259
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 242--259
+
+ []
+
+[35]
+Underfull \hbox (badness 10000) in paragraph at lines 292--307
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 292--307
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 292--307
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 292--307
+
+ []
+
+[36]
+Underfull \hbox (badness 10000) in paragraph at lines 333--342
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 333--342
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 333--342
+
+ []
+
+) [37]
+\openout2 = `Book-Ch6.aux'.
+
+ (Book-Ch6.tex [38
+
+
+
+
+]
+Chapter 6
+[39]
+Underfull \hbox (badness 10000) in paragraph at lines 42--47
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 42--47
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 66--71
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 66--71
+
+ []
+
+[40]
+Underfull \hbox (badness 10000) in paragraph at lines 88--93
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 88--93
+
+ []
+
+
+Package amsmath Warning: Foreign command \atopwithdelims;
+(amsmath)                \frac or \genfrac should be used instead
+(amsmath)                 on input line 119.
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 110--135
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 110--135
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 110--135
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 110--135
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 110--135
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 110--135
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 110--135
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 110--135
+
+ []
+
+[41]
+Underfull \hbox (badness 10000) in paragraph at lines 152--157
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 152--157
+
+ []
+
+[42]
+Underfull \hbox (badness 10000) in paragraph at lines 191--202
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 191--202
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 191--202
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 191--202
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 229--240
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 229--240
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 229--240
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 229--240
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 229--240
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 229--240
+
+ []
+
+[43]
+Underfull \hbox (badness 10000) in paragraph at lines 241--248
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 241--248
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 241--248
+
+ []
+
+
+Overfull \hbox (2.04001pt too wide) in paragraph at lines 262--265
+[]\OT1/cmr/m/n/10.95 By The-o-rem 7 and the fact that $\OML/cmm/m/it/10.95 D\OT
+1/cmr/m/n/10.95 (\OML/cmm/m/it/10.95 EQ\OT1/cmr/m/n/10.95 ) = \OML/cmm/m/it/10.
+95 O\OT1/cmr/m/n/10.95 (\OML/cmm/m/it/10.95 n\OT1/cmr/m/n/10.95 )$, we have the
+ lower bound $\OML/cmm/m/it/10.95 R[]\OT1/cmr/m/n/10.95 ([]) =
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 262--265
+
+ []
+
+) [44]
+\openout2 = `Book-Ch7.aux'.
+
+ (Book-Ch7.tex
+Chapter 7
+[45
+
+
+
+
+]
+Underfull \hbox (badness 10000) in paragraph at lines 25--33
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 25--33
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 25--33
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 61--72
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 61--72
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 61--72
+
+ []
+
+[46]
+Underfull \hbox (badness 10000) in paragraph at lines 90--112
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 90--112
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 90--112
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 90--112
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 90--112
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 90--112
+
+ []
+
+[47]
+Underfull \hbox (badness 10000) in paragraph at lines 131--160
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 131--160
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 131--160
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 131--160
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 131--160
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 131--160
+
+ []
+
+
+Overfull \hbox (19.85538pt too wide) in paragraph at lines 131--160
+\OT1/cmr/m/n/10.95 Then all play-ers can sum over the re-sults sent by each pla
+yer and all get the re-sult of $[][](\OML/cmm/m/it/10.95 x[]; [] ; x[]\OT1/cmr/
+m/n/10.95 )$. 
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 131--160
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 131--160
+
+ []
+
+[48]
+Underfull \hbox (badness 10000) in paragraph at lines 184--189
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 184--189
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 217--246
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 217--246
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 217--246
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 217--246
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 217--246
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 217--246
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 217--246
+
+ []
+
+[49]
+Underfull \hbox (badness 10000) in paragraph at lines 268--286
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 268--286
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 268--286
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 268--286
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 268--286
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 268--286
+
+ []
+
+[50]
+Underfull \hbox (badness 10000) in paragraph at lines 307--319
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 307--319
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 307--319
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 307--319
+
+ []
+
+[51]
+Underfull \hbox (badness 10000) in paragraph at lines 342--351
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 342--351
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 342--351
+
+ []
+
+) [52]
+\openout2 = `Book-Notes.aux'.
+
+ (Book-Notes.tex
+Chapter 8
+[53
+
+
+
+
+]
+Overfull \hbox (22.65005pt too wide) in paragraph at lines 63--64
+\OT1/cmr/m/n/10.95 Sipser [[]]. See also the pa-pers of Nisan and Wigder-son [[
+]], Kre-mer, Nisan, and Ron [[]],
+ []
+
+[54]
+Overfull \hbox (18.53261pt too wide) in paragraph at lines 71--72
+[]\OT1/cmr/m/n/10.95 Multiparty com-mu-ni-ca-tion com-plex-ity was first con-si
+d-ered by Chan-dra, Furst, and Lip-ton [[]].
+ []
+
+) [55] (Book.bbl [56
+
+
+
+]
+Bibliography
+
+Underfull \vbox (badness 10000) has occurred while \output is active []
+
+ [57])
+[58] (Book.aux (Book-Ch1.aux) (Book-Ch2.aux) (Book-Ch3.aux) (Book-Ch4.aux)
+(Book-Ch5.aux) (Book-Ch6.aux) (Book-Ch7.aux) (Book-Notes.aux)) ) 
+Here is how much of TeX's memory you used:
+ 2858 strings out of 492946
+ 35520 string characters out of 3126266
+ 108455 words of memory out of 3000000
+ 6526 multiletter control sequences out of 15000+200000
+ 14637 words of font info for 58 fonts, out of 3000000 for 9000
+ 1302 hyphenation exceptions out of 8191
+ 34i,8n,35p,743b,308s stack positions out of 5000i,500n,10000p,200000b,50000s
+<C:/Users/zongh
+/AppData/Local/Programs/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmbx10.pfb><C
+:/Users/zongh/AppData/Local/Programs/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/
+cmbx12.pfb><C:/Users/zongh/AppData/Local/Programs/MiKTeX 2.9/fonts/type1/public
+/amsfonts/cm/cmcsc10.pfb><C:/Users/zongh/AppData/Local/Programs/MiKTeX 2.9/font
+s/type1/public/amsfonts/cm/cmex10.pfb><C:/Users/zongh/AppData/Local/Programs/Mi
+KTeX 2.9/fonts/type1/public/amsfonts/cmextra/cmex8.pfb><C:/Users/zongh/AppData/
+Local/Programs/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmmi10.pfb><C:/Users/z
+ongh/AppData/Local/Programs/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmmi6.pfb
+><C:/Users/zongh/AppData/Local/Programs/MiKTeX 2.9/fonts/type1/public/amsfonts/
+cm/cmmi8.pfb><C:/Users/zongh/AppData/Local/Programs/MiKTeX 2.9/fonts/type1/publ
+ic/amsfonts/cm/cmmi9.pfb><C:/Users/zongh/AppData/Local/Programs/MiKTeX 2.9/font
+s/type1/public/amsfonts/cm/cmr10.pfb><C:/Users/zongh/AppData/Local/Programs/MiK
+TeX 2.9/fonts/type1/public/amsfonts/cm/cmr6.pfb><C:/Users/zongh/AppData/Local/P
+rograms/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmr8.pfb><C:/Users/zongh/AppD
+ata/Local/Programs/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmr9.pfb><C:/Users
+/zongh/AppData/Local/Programs/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmsy10.
+pfb><C:/Users/zongh/AppData/Local/Programs/MiKTeX 2.9/fonts/type1/public/amsfon
+ts/cm/cmsy6.pfb><C:/Users/zongh/AppData/Local/Programs/MiKTeX 2.9/fonts/type1/p
+ublic/amsfonts/cm/cmsy8.pfb><C:/Users/zongh/AppData/Local/Programs/MiKTeX 2.9/f
+onts/type1/public/amsfonts/cm/cmsy9.pfb><C:/Users/zongh/AppData/Local/Programs/
+MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmti10.pfb><C:/Users/zongh/AppData/Lo
+cal/Programs/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmti9.pfb><C:/Users/zong
+h/AppData/Local/Programs/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmtt9.pfb><C
+:/Users/zongh/AppData/Local/Programs/MiKTeX 2.9/fonts/type1/public/doublestroke
+/dsrom10.pfb><C:/Users/zongh/AppData/Local/Programs/MiKTeX 2.9/fonts/type1/publ
+ic/amsfonts/symbols/msam10.pfb><C:/Users/zongh/AppData/Local/Programs/MiKTeX 2.
+9/fonts/type1/public/amsfonts/symbols/msbm10.pfb>
+Output written on Book.pdf (61 pages, 500856 bytes).
+PDF statistics:
+ 291 PDF objects out of 1000 (max. 8388607)
+ 0 named destinations out of 1000 (max. 500000)
+ 1 words of extra memory for PDF output out of 10000 (max. 10000000)
+

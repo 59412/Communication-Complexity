@@ -1,0 +1,2407 @@
+\documentclass[11pt,oneside]{book}
+\usepackage{amsmath,amsthm,amsfonts,amssymb}
+\usepackage{fullpage}
+\usepackage{dsfont}
+\usepackage{titlesec}
+\usepackage[usenames]{xcolor}
+
+\theoremstyle{plain}
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}{Lemma}
+\newtheorem{corollary}{Corollary}
+\newtheorem{proposition}{Proposition}
+\theoremstyle{definition}
+\newtheorem{definition}{Definition}
+\newtheorem{exercise}{Exercise}
+\newtheorem{remark}{Remark}
+\newtheorem{problem}{Problem}
+\newtheorem{challenge}{Challenge Problem}
+\newtheorem{open}{Open Problem}
+\theoremstyle{plain}
+
+\newcommand{\argmin}{\mathrm{argmin}}
+\newcommand{\calX}{\mathcal{X}}
+\newcommand{\calY}{\mathcal{Y}}
+\newcommand{\calZ}{\mathcal{Z}}
+\newcommand{\cost}{\mathrm{cost}}
+\newcommand{\dHam}{\mathrm{d}_{\mathrm{Ham}}}
+\newcommand{\disc}{\mathrm{disc}}
+\newcommand{\discu}{\mathrm{disc_u}}
+\newcommand{\Disj}{\textsc{Disj}}
+\newcommand{\Eq}{\textsc{Eq}}
+\newcommand{\GHD}{\textsc{GHD}}
+\newcommand{\GIP}{\textsc{GIP}}
+\newcommand{\GT}{\textsc{GT}}
+\newcommand{\HD}{\textsc{HD}}
+\newcommand{\ICext}{\mathrm{IC}^{\mathrm{ext}}}
+\newcommand{\ICint}{\mathrm{IC}^{\mathrm{int}}}
+\newcommand{\icostext}{\mathrm{icost}^{\mathrm{ext}}}
+\newcommand{\icostint}{\mathrm{icost}^{\mathrm{int}}}
+\newcommand{\IP}{\textsc{IP}}
+\newcommand{\Index}{\textsc{Index}}
+\newcommand{\Maj}{\textsc{Maj}}
+\newcommand{\MIP}{\textsc{MIP}}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\rank}{\mathrm{rank}}
+\newcommand{\Rpriv}{R^{\mathrm{priv}}}
+\newcommand{\SumIndex}{\textsc{SumIndex}}
+
+\newcommand{\exercises}{\bigskip \noindent\rule{8cm}{0.4pt} \medskip}
+\newcommand{\replacethistext}[1]{\textcolor{red}{#1}}
+
+
+\begin{document}
+	
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\chapter[CH01]{Deterministic communication complexity}
+
+In communication complexity, two players named \emph{Alice} and \emph{Bob} each receive some input that the other player cannot see and seek to compute some function on their joint input. We wish to determine the minimum number of bits that they must exchange to compute this function. As a result, the main object we will study will not be algorithms, but rather \emph{communication protocols}. 
+
+\newpage
+
+\begin{definition}[Protocol]
+	A \emph{(communication) protocol} $\pi$ is a rooted binary tree $T(\pi)$ with the following additional information:
+	\begin{itemize}
+		\item Every internal node of the tree is labelled with $A$ or $B$, determining whether Alice or Bob sends the next bit.
+		\item Every internal node $v$ labelled with $A$ also has a corresponding function $h_v : \calX \to \{0,1\}$ which determines the next bit that Alice sends.
+		\item Similarly, every internal node $v$ labelled with $B$ also has a corresponding function $h_v : \calY \to \{0,1\}$ which determines the next bit that Bob sends.
+		\item The two edges leaving an internal node $v$ are labelled with $0$ and $1$, respectively.
+		\item Each leaf node is labelled with $0$ or $1$.
+	\end{itemize}
+\end{definition}
+
+\begin{definition}[Function computed by a protocol]
+	A protocol $\pi$ \emph{computes} the function $f : \calX \times \calY \to \{0,1\}$ if for every input $(x,y) \in \calX \times \calY$, the path in $\pi$ obtained by following the edge labelled with $h_v(x)$ at each internal node labelled by $A$ and $h_v(y)$ at each internal node labelled by $B$ leads to a leaf with the label $f(x,y)$.
+\end{definition}
+
+Following the standard computer science approach, we measure the communication cost of protocols in the worst-case sense.
+
+\begin{definition}[Communication cost]
+	The \emph{communication cost} of a protocol $\pi$ is 
+	\[
+	\cost(\pi) = \mathrm{height}(T(\pi)),
+	\]
+	the height of the tree for $\pi$ or, in other words, the length of the longest path between the root of $T(\pi)$ and any of the leaves in the tree.
+	It corresponds to the maximum number of bits that Alice and Bob exchange when executing the protocol over any of their inputs.
+\end{definition}
+
+
+\begin{definition}[Deterministic communication complexity]
+	The \emph{deterministic communication complexity} of the function $f : \mathcal{X} \times \mathcal{Y} \to \{0,1\}$ is
+	\[
+	D(f) = \min_{\pi \mbox{ computes } f} \cost(\pi)
+	\]
+	is the minimum communication cost of a protocol that computes $f$.
+\end{definition}
+
+In the rest of this chapter, we will aim to determine the deterministic communication complexity for some fundamental functions.
+
+\exercises
+
+\begin{exercise} %[Easy]
+	Do there exist functions $f : \mathcal{X} \times \mathcal{Y} \to \{0,1\}$ with  communication complexity $D(f) = 0$?
+\end{exercise}
+
+
+\section{Equality}
+We begin by considering the simplest (but also perhaps the most important) function: equality. The function $\Eq : \{0,1\}^n \times \{0,1\}^n \to \{0,1\}$ is defined by
+\[
+\Eq(x,y) = \begin{cases}
+1 & \mbox{if } x = y \\
+0 & \mbox{if } x \neq y
+\end{cases}
+\]
+so that the value of the function is 1 if and only if Alice and Bob's inputs are identical.
+
+\begin{theorem}
+	$D(\Eq) \le n + 1$.
+\end{theorem}
+
+\begin{proof}
+	There is a very simple protocol $\pi$ with cost $n+1$ that computes the function $\Eq$: Alice sends the $n$ bits of her input to Bob, then Bob sends the value $1$ if and only if his input $y$ is equal to the input $x$ that he has received. The value of each leaf is set to be the same as the value of the edge that leads to it.
+\end{proof}
+
+
+\section{General upper bound}
+The trivial protocol we used to bound the deterministic communication complexity of the \textsc{Equality} function can also be modified slightly to establish a much more general result.
+
+\begin{theorem}
+	For every function $f : \mathcal{X} \times \mathcal{Y} \to \{0,1\}$, 
+	\[
+	D(f) \le \min\{\lceil \log_2 |\mathcal{X}| \rceil, \lceil \log_2 |\mathcal{Y}| \rceil\} + 1.
+	\]
+\end{theorem}
+
+\begin{proof}
+	We can encode each element in $\calX$ with $\lceil \log_2 |\mathcal{X}| \rceil$ bits. We can use such an encoding to design a protocol $\pi$ with cost $\lceil \log_2 |\mathcal{X}| \rceil + 1$: Alice sends $\lceil \log_2 |\mathcal{X}| \rceil$ bits to communicate the encoding of her input $x$ to Bob, and Bob replies with the value $f(x,y)$. (Note that Bob now knows both $x$ and $y$ so that he can compute this value.)
+	
+	Similarly, we can design a protocol $\pi'$ with cost $\lceil \log_2 |\mathcal{Y}| \rceil$ by taking an encoding of the elements in $\calY$ and having Bob send the encoding of his input $y$ to Alice and then having Alice respond with the value $f(x,y)$. (Now Alice is the one who knows both $x$ and $y$.)
+	
+	Combining the two protocols above, we obtain that
+	\[
+	D(f) \le \min\{ \cost(\pi), \cost(\pi') \} = \min\{\lceil \log_2 |\mathcal{X}| \rceil + 1, \lceil \log_2 |\mathcal{Y}| \rceil + 1\},
+	\]
+	as we wanted to show.
+\end{proof}
+
+
+\section{Parity}
+The general upper bound we established in the last section is far from tight in some cases. Consider for example the $\textsc{Parity} : \{0,1\}^n \times \{0,1\}^n \to \{0,1\}$ function defined by
+\[
+\textsc{Parity}(x,y) = \bigoplus_{i=1}^n (x_i \oplus y_i) 
+\]
+where $\bigoplus_{i=1}^n z_i = \sum_{i=1}^n z_i \pmod{2}$ is the parity of the sum and, similarly, $a \oplus b$ is defined to be $a+b \pmod{2}$.
+
+\begin{theorem}
+	$D(\textsc{Parity}) \le 2$.
+\end{theorem}
+
+\begin{proof}
+	Consider the protocol $\pi$ where Alice sends the value $\bigoplus_{i=1}^n x_i$ to Bob, Bob sends the value $\bigoplus_{i=1}^n y_i$, and the leaf at the end of the path labelled with $a$ and $b$ takes the value $a \oplus b$. This protocol has cost 2, since Alice and Bob each send a single bit. And we can verify that $\pi$ correctly computes the \textsc{Parity} function since on any input $(x,y) \in \{0,1\}^n \times \{0,1\}^n$, the protocol leads to the leaf labelled with
+	\[
+	\left( \bigoplus_{i=1}^n x_i \right) \oplus 
+	\left( \bigoplus_{i=1}^n y_i \right) 
+	=  \bigoplus_{i=1}^n \left(x_i \oplus y_i \right) \\
+	= \textsc{Parity}(x,y). \qedhere
+	\]
+\end{proof}
+
+
+\section{Median}
+Define $[n] = \{1,2,\ldots,n\}$ and $2^{[n]}$ to be the set of subsets of $[n]$. The $\textsc{Median} : 2^{[n]} \times 2^{[n]} \to [n]$ function is defined by
+\[
+\textsc{Median}(S,T) = \mathrm{median}(S \cup T);
+\]
+it is the median element of the multiset obtained by taking the union of Alice and Bob's sets. 
+
+\begin{theorem}
+	$D(\textsc{Median}) = O(\log^2 n)$.
+\end{theorem}
+
+\begin{proof}
+	Here is a simple protocol that computes the \textsc{Median} function. Alice and Bob start by exchanging the total number of elements in $S$ and in $T$. Define $k = \lfloor \frac{|S| + |T|}2 \rfloor$. Alice and Bob now need to identify the $k$-th smallest element in the multiset $S \cup T$. They can do so using a binary search approach. In the first step of this search, Alice and Bob exchange the number of elements in $S \cap [n/2]$ and $T \cap [n/2]$, respectively. If that number $m$ is $m \ge k$, then we continue the binary search in the range $\{1,2,\ldots,n/2\}$. Otherwise, we update $k' = k - m$ and search for the $k'$-th smallest element in $(S \cup T) \cap \{n/2+1,\ldots,n\}$.
+	
+	This binary search process will end at the median element. The search itself requires $O( \log n)$ rounds, and at each round Alice and Bob exchange a number in the range $1,2,\ldots,n$, which they can do with $O(\log n)$ bits of communication.
+\end{proof}
+
+\exercises
+
+\begin{exercise} %[Easy]
+	Prove that $D(\textsc{Min}) = O(\log n)$ and $D(\textsc{Max}) = O(\log n)$.
+\end{exercise}
+
+\begin{exercise}
+	Consider the \textsc{Median'} function where we take the median of the simple set (i.e., deleting duplicates) obtained by taking the union $S \cup T$. 
+	Prove that $D(\textsc{Median'}) = O(\log^2 n)$.
+\end{exercise}
+
+\begin{exercise} %[Hard]
+	Prove that $D(\textsc{Median}) = O(\log n)$.
+\end{exercise}
+
+
+\section{Rectangles and partition number}
+
+As we have seen in the last sections, we can give upper bounds on the deterministic communication complexity of a given function by designing a communication protocol that computes the function. Our main goal, however, will generally be to prove lower bounds on the communication complexity of various functions. We can do so by analyzing \emph{combinatorial rectangles}.
+
+\begin{definition}[Rectangle]
+	A \emph{(combinatorial) rectangle} over the finite set $\calX \times \calY$ is a set $S \subseteq \calX \times \calY$ defined by $S = A \times B$ for some sets $A \subseteq \calX$ and $B \subseteq \calY$.
+\end{definition}
+
+\begin{definition}[$f$-monochromatism]
+	Given a function $f : \calX \times \calY \to \{0,1\}$, a rectangle $R \subseteq \calX \times \calY$ is \emph{$f$-monochromatic} if $f(x,y)$ takes the same value for all $(x,y) \in R$.
+\end{definition}
+
+\begin{definition}[$\chi$]
+	The \emph{partition number} of a function $f : \calX \times \calY \to \{0,1\}$, denoted
+	\[
+	\chi(f),
+	\]
+	is the minimum number of $f$-monochromatic rectangles required to partition $\calX \times \calY$.
+\end{definition}
+
+
+\section{Partition bound}
+
+\begin{lemma}
+	For every function $f : \mathcal{X} \times \mathcal{Y} \to \{0,1\}$, 
+	\[
+	D(f) \ge \log_2 \chi(f).
+	\]
+\end{lemma}
+
+\begin{proof}
+	Let $\pi$ be any protocol that computes $f$ and has cost $\cost(\pi) = D(f)$. Each leaf in the tree for $\pi$ corresponds to an $f$-monochromatic rectangle and the rectangles corresponding to each leaf in the tree partition $\mathcal{X} \times \mathcal{Y}$. Since a binary tree of depth $d$ can have at most $2^d$ leaves, this means that $\chi(f) \le 2^{\cost(\pi)} = 2^{D(f)}$. 
+\end{proof}
+
+\exercises
+
+\begin{exercise} %[Hard]
+	Show that $D(f) \le (\log_2 \chi(f) + 1)^2$.
+\end{exercise}
+
+\begin{open}
+	Find a function $f$ for which $D(f) \ge 4 \log_2 \chi(f)$.
+\end{open}
+	
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\chapter[CH02]{More lower bound techniques}
+
+In the first chapter, we introduced the deterministic communication complexity 
+model and saw the general \emph{partition bound} method for proving communication complexity lower bounds. While the partition bound is quite strong, it is hard to work with directly. The goal of this chapter is to introduce other general methods for proving communication complexity lower bounds more easily: the \emph{fooling set bound}, the \emph{rectangle size bound}, and the \emph{log rank bound}.
+
+\newpage \section{Fooling set bound}
+
+For many functions, the \emph{fooling set} bound is the easiest way to get meaningful communication complexity lower bounds.
+
+\begin{definition}[Fooling set]
+	A set $F \subseteq \calX \times \calY$ is a \emph{fooling set} for the function $f : \calX \times \calY \to \{0,1\}$ if there is a value $b \in \{0,1\}$ such that
+	\begin{enumerate}
+		\item For every $(x,y) \in F$, $f(x,y) = b$; and
+		\item For every $(x,y) \neq (x',y') \in F$, we have $f(x,y') \neq b$ or $f(x',y) \neq b$ (or both).
+	\end{enumerate}
+\end{definition}
+
+\begin{lemma}
+	If $f : \mathcal{X} \times \mathcal{Y} \to \{0,1\}$ has a fooling set of size $t$ then $\chi(f) \ge t$ and $D(f) \ge \log_2 t$.
+\end{lemma}
+
+\begin{proof}
+	Let $F$ be a fooling set of size $t$ for the function $f$. Consider for some $(x,y) \neq (x',y') \in F$, by definition of fooling set, we have
+	\begin{enumerate} 
+		\item $f(x,y) = f(x',y')$ and 
+		\item $f(x,y') \neq f(x,y)$ or $f(x',y) \neq f(x,y)$ 
+	\end{enumerate}
+	Now consider a combinatorial rectangle that contains both $f(x,y)$ and $f(x',y')$, by definition of a combinatorial rectangle, both $f(x',y )$ and $f(x,y')$ must be in the same rectangle. However, at least one of $f(x',y )$ and $f(x,y')$ must have a different value from $f(x,y)$ and $f(x',y')$. Thus, for any pair of $(x,y) \neq (x',y') \in F$, a rectangle containing them both cannot be f-monochromatic.\\
+	\\
+	Since we have a fooling set of size $t$, and every element inside the fooling set cannot share f-monochromatic rectangles with each other. Thus, we need at least $t$ f-monochromatic rectangles to partition $\calX \times \calY$, in other words, $\chi(f) \ge t$.\\
+	\\
+	Furthermore, by \textbf{Lemma 1} from \textbf{Chapter 1}, $D(f) \ge \log_2 \chi(f)$. And since $\chi(f) \ge t$, we have $D(f) \ge \log_2 t$.
+\end{proof}
+
+\exercises
+0
+\begin{exercise}
+	$\chi(f) \ge t+1$ if $f$ is not constant.
+\end{exercise}
+ \section{Equality II}
+
+Using the fooling set bound, we can get an optimal lower bound on the communication complexity of the equality function.
+
+\begin{theorem}
+	$D(\Eq) \ge n$.
+\end{theorem}
+
+\begin{proof}
+	Consider the rectangle for $\Eq : \{0,1\}^n \times \{0,1\}^n \rightarrow \{0,1\}$.\\
+	Let $F = \{(x,x): x \in \{0,1\}^n\}$. \\
+	\\
+	Now, for any pair $x \neq y \in \{0,1\}^n$, consider $(x,x)$ and $(y,y) \in F$, we have 
+	\begin{enumerate}
+		\item $\Eq(x,x) = \Eq(y,y) = 1$
+		\item $\Eq(x,y) = \Eq(y,x) = 0 \neq 1$
+	\end{enumerate} 
+	Thus, $F$ is a fooling set for \Eq and we have $|F| = |\{0,1\}^n| = 2^n$. \\ 
+	\\
+	By \textbf{Lemma 1}, we have $D(\Eq) \ge \log_2 |F| = \log_2 2^n = n$
+\end{proof}
+
+\exercises
+
+\begin{exercise}
+	Prove that in fact $D(\Eq) = n+1$.
+\end{exercise}
+
+
+ \section{Set disjointness}
+
+The \emph{set disjointness} function $\Disj : 2^{[n]} \times 2^{[n]}$ is defined by
+\[
+\Disj(S,T) = \begin{cases}
+1 & \mbox{if } S \cap T = \emptyset \\
+0 & \mbox{if } S \cap T \neq \emptyset.
+\end{cases}
+\]
+Use the fooling set method to obtain optimal bounds on the communication complexity of the set disjointness function.
+
+\begin{theorem}
+	$D(\Disj) = \Theta(n)$.
+\end{theorem}
+
+\begin{proof}
+	For upper bound, by \textbf{Theorem 2} from \textbf{Chapter 1}, we know $D(\Disj)) \leq \log_2 |2^{[n]}| = n$. So $D(\Disj) = O(n)$.\\
+	\\
+	For lower bound, we will use the fooling set method.\\
+	\\
+	Consider the rectangle for $\Disj :2^{[n]} \times 2^{[n]} \rightarrow \{0,1\}$.\\
+	Let $F = \{(x,\overline{x}): x \in 2^{[n]}\}$, and $\overline{x}$ is the complement of $x$. \\
+	\\
+	Now, for any pair $x \neq y \in 2^{[n]}$, consider $(x,\overline{x})$ and $(y,\overline{y}) \in F$, we have 
+	\begin{enumerate}
+		\item $\Disj(x,\overline{x}) = \Disj(y,\overline{y}) = 1$ \\
+		\textit{proof:} A set is always disjoint with its complement 
+		\item Either $\Disj(x,\overline{y}) = 0$ or $\Disj(\overline{x},y) = 0$ \\
+		\textit{proof:} At least one of $x$ and $y$ must contain an element that the other doesn't since $x \neq y$. Without loss of generality, assume $x$ has an element $a$ which $y$ doesn't. Then $\overline{y}$ must contain $a$ and so does $x$, thus $\Disj(x,\overline{y}) = 0$.
+	\end{enumerate} 
+	By above claims, we conclude that $F$ is a fooling set for \Disj, and $|F| = |2^{[n]}| = 2^n$.\\
+	And by \textbf{Lemma 1}, we have $D(\Disj) \ge \log_2 |F| = \log_2 2^n = n$, in other words, $D(\Disj) = \Omega(n)$\\
+	Since $D(\Disj) = O(n)$ and $D(\Disj) = \Omega(n)$, we have $D(\Disj) = \theta(n)$
+\end{proof}
+
+
+
+ \section{Inner product}
+
+The fooling set bound is not always tight. One particularly noteworthy example where this method fails to give a good lower bound is the inner product function  $\IP : \{0,1\}^n \times \{0,1\}^n \to \{0,1\}$ defined by
+\[
+\IP(x,y) = \sum_{i=1}^n x_i y_i \pmod{2}.
+\]
+As we will see later, $D(\IP) = \Theta(n)$, but the fooling set bound can only give the much weaker bound of $D(\IP) = \Omega(\log n)$.
+
+\begin{theorem}
+	Every fooling set for the $\IP$ function has size at most $n^2$.
+\end{theorem}
+
+\begin{proof}
+	\replacethistext{Enter your proof here, if you complete it.}
+\end{proof}
+
+
+
+ \section{Special case of the rectangle size bound}
+
+The partition bound says that the communication complexity of $f : \calX \times \calY \to \{0,1\}$ is large if the minimum number of $f$-chromatic rectangles required to partition $\calX \times \calY$ is large. And the number of $f$-chromatic rectangles required to partition $\calX \times \calY$ must be large whenever the only $f$-chromatic rectangles are small. This observation is the core of the \emph{rectangle size bound}.
+
+\begin{definition}[$m(f)$]
+	For a given function $f : \calX \times \calY \to \{0,1\}$, define the \emph{maximum rectangle size} of $f$ to be
+	\[
+	m(f) = \max \{ |R| : R \subseteq \calX \times \calY \mbox{ is an $f$-monochromatic rectangle} \}.
+	\]
+\end{definition}
+
+
+\begin{lemma}
+	For every function $f : \calX \times \calY \to \{0,1\}$, $\chi(f) \ge \frac{|\calX| \, |\calY|}{m(f)}$ and therefore
+	\[
+	D(f) \ge \log_2 \frac{|\calX| \, |\calY|}{m(f)}.
+	\]
+\end{lemma}
+
+\begin{proof}
+	Since $m(f)$ is the size of largest f-monochromatic rectangle, all other possible f-monochromatic rectangles must have size smaller than or equal to $m(f)$. Thus, for any partition of $\calX \times \calY$, the number of f-monochromatic rectangles must be at least $\frac{|\calX| \, |\calY|}{m(f)}$. In other words, $\chi(f) \ge \frac{|\calX| \, |\calY|}{m(f)}$.\\
+	\\
+	By \textbf{Lemma 1} from \textbf{Chapter 1}, $D(f) \ge \log_2 \chi(f)$, hence $D(f) \ge \log_2 \frac{|\calX| \, |\calY|}{m(f)}$.
+\end{proof}
+
+
+
+ \section{Inner product II}
+
+Use the rectangle size bound to prove an optimal lower bound on the inner product function.
+
+\begin{theorem}
+	$m(IP) \le 2^{n}$ and so $D(IP) = \Theta(n)$.
+\end{theorem}
+
+\begin{proof}
+	Let $R$ be the 0-rectangle of maximal size, and say $R=A\times B\in\calX \times \calY$. \\
+	 \\
+	Now let $R'=\{A\cup\{0\}\}\times\{B\cup\{0\}\}$\\
+	 \\
+	Now if $IP(x,y) = 0$ and $IP(x',y) = 0$, then $IP(x+x',y) = 0$.\\
+	Similarly if $IP(x,y) = 0$ and $IP(x,y') = 0$, then $IP(x,y+y') = 0$, and thus $A$, $B$ are orthogonal subspace of $\mathbb{Z}_2^n$.\\
+	 \\
+	Hence $dim(A)+dim(B) \leq n$,\\
+	$2^{dim(A)+dim(B)} = |A||B| = m_0(\IP) \leq 2^n.$\\
+\end{proof}
+
+
+ \section{Rectangle size bound}
+
+The (general) rectangle size bound is obtained by generalizing the observation from the last section: instead of just counting the number of elements in a rectangle, we can consider the measure of rectangles under \emph{any} probability distribution on $\calX \times \calY$.
+
+\begin{definition}[$m_\mu(f)$]
+	For a given function $f : \calX \times \calY \to \{0,1\}$ and a given distribution $\mu$ on $\calX \times \calY$, define the \emph{maximum rectangle size of $f$ with respect to $\mu$} to be
+	\[
+	m_\mu(f) = \max \{ \mu(R) : R \subseteq \calX \times \calY \mbox{ is an $f$-monochromatic rectangle} \}.
+	\]
+\end{definition}
+
+
+\begin{lemma}
+	For every function $f : \calX \times \calY \to \{0,1\}$ and every distribution $\mu$ on $\calX \times \calY$, 
+	\[
+	\chi(f) \ge \frac1{m_\mu(f)}
+	\]
+	and therefore
+	\[
+	D(f) \ge \log_2 \frac{1}{m_\mu(f)}.
+	\]
+\end{lemma}
+
+\begin{proof}
+	By definition of $m_\mu(f)$, for any f-monochromatic rectangle R, $\mu(R) \leq m_\mu(f)$. So for any partition of $\calX \times \calY$, the number of f-monochromatic rectangles is at least $\frac{1}{m_\mu(f)}$ since for any partition $\sum_{R} \mu(R) = 1$ and any $\mu(R) \leq m_\mu(f)$. In other words, $\chi(f) \ge \frac{1}{m_\mu(f)}$.\\
+	\\
+	Furthermore, By \textbf{Lemma 1} from \textbf{Chapter 1}, $D(f) \ge \log_2 \chi(f) \ge \log_2 \frac{1}{m_\mu(f)}$. 
+\end{proof}
+
+
+ \section{Fooling sets and rectangle size bound}
+
+The fooling set bound is a special case of the rectangle size bound, as the following theorem shows.
+
+\begin{theorem}
+	If $f : \calX \times \calY \to \{0,1\}$ has a fooling set $S \subseteq \calX \times \calY$ of size $|S| = t$, then there is a distribution $\mu$ on $\calX \times \calY$ for which $m_\mu(f) \le 1/t$.
+\end{theorem}
+
+\begin{proof}
+	Considering any fooling set $S$ with size $t$ and the following distribution $\mu$:\\
+	 \\
+	$\mu:\calX\times\calY \rightarrow \mathbb{R}_+$ is described as:\\
+	$\mu(s)=\frac1t$   for $s\in S$\\
+	$\mu(s)=0$ otherwise\\
+	 \\
+	Since by previous results we have at least $t$ other f-monochromatic rectangles, and for each of these rectangles, say $R'$:\\
+	-if it contains $0$s, then $\mu(R')=0$\\
+	-if it contains $1$s, then $\mu(R')=\frac1t$ because no two elements in $S$ can be in the same f-monochromatic rectangle.\\
+	 \\
+	Thus $m_\mu(f) \le 1/t$.
+\end{proof}
+
+
+ \section{Log rank bound}
+
+Another convenient measure that lower bounds the partition number of a function is the log of the rank of the corresponding matrix.
+
+\begin{definition}[Matrix of a function]
+	The \emph{matrix} $M_f$ corresponding to the function $f : \calX \times \calY \to \{0,1\}$ is the $|\calX| \times |\calY|$-dimensional $\{0,1\}$-valued matrix with rows indexed by $\calX$ and columns indexed by $\calY$ defined by
+	\[
+	(M_f)_{x,y} = f(x,y)
+	\]
+	for every $x \in \calX$ and $y \in \calY$.
+\end{definition}
+
+\begin{definition}[Rank]
+	The \emph{rank} of the function $f$, denoted
+	\[
+	\rank(f),
+	\] 
+	is the linear rank of the matrix $M_f$ over $\R$.
+\end{definition}
+
+The logarithm of the rank of a function gives a lower bound on the communication complexity of the function.
+
+\begin{lemma}
+	\label{lem:logrank}
+	For every $f : \calX \times \calY \to \{0,1\}$,
+	\[
+	D(f) \ge \log_2 \rank(f).
+	\]
+\end{lemma}
+
+\begin{proof}
+	(Algebra)Consider $(M_f)_{x,y}$ which represents the rectangle $\calX \times \calY$. In this matrix, we have $rank(f)$ rows that are linearly independent to each other which means for all $rank(f)$ rows, there exists some elements in it that cannot be represented by any linear combination of other rows. If such elements exists, then we need an extra rectangle for these elements in the process of partitioning. And since there are $rank(f)$ suck rows, we need at least $rank(f)$ f-monochromatic rectangles to partition $\calX \times \calY$. In other words, $\chi(f) \ge rank(f)$. \\
+	\\
+	By \textbf{Lemma 1} from \textbf{Chapter 1}, $D(f) \ge \log_2 \chi(f) \ge \log_2 rank(f)$. \\
+	 \\
+	(Combintorics) Let $R=\{R_i\}$ be a partition of $M$. \\
+	Then $\sum rank(R_i) \ge rank(R)$.\\
+	 \\
+	Let $R$ be partition of f-monochromatic rectangles, then we have \\
+	 \\
+	$rank(R) \leq \sum_{R_i\in R} rank(R_i) \leq |R| = \chi(f)$.
+	
+\end{proof}
+
+\exercises
+
+\begin{exercise} %[Easy]
+	Give an alternative proof that $D(\Eq) \ge n$ using the log rank bound.
+\end{exercise}
+
+\begin{exercise}
+	Give an alternative proof that $D(\IP) \ge n$ using the log rank bound.\end{exercise}
+
+
+ \section{Greater than}
+
+The greater-than function $\GT : [2^n] \times [2^n] \to \{0,1\}$ is defined by
+\[
+\GT(x,y) = \begin{cases}
+1 & \mbox{if } x > y \\
+0 & \mbox{otherwise.}
+\end{cases}
+\]
+Use the log rank bound to give an optimal lower bound on the greater-than function.
+
+\begin{theorem}
+	$D(\GT) = \Theta(n)$.
+\end{theorem}
+
+\begin{proof}
+	Consider Matrix of \GT $(M_{\GT})_{x,y}$. The matrix is filled with $1$ for any index under the diagonal and $0$ for any index above or on the diagonal, assuming $x$ and $y$ are sorted. It is obvious that the rank of $(M_{\GT})_{x,y}$ is $2^n-1$, and then by \textbf{Lemma 4}, we have $D(\GT) \ge \log_2 (2^n-1)$, and $D(\GT) = \Omega(n)$.\\
+	\\
+	For the upper bound, by \textbf{Theorem 2} from \textbf{Chapter 1}, we know $D(\GT)) \leq \log_2 |[2^n]| = n$. So $D(\GT) = O(n)$. \\
+	\\
+	Thus, $D(\GT) = \theta(n)$.
+\end{proof}
+
+
+
+ \section{Tightness of the log rank bound}
+
+Prove that the rank of a function can also be used to obtain an upper bound on the communication complexity of the function.
+
+\begin{theorem}
+	For every $f : \calX \times \calY \to \{0,1\}$, $D(f) \le \rank(f) + 1$.
+\end{theorem}
+
+\begin{proof}
+	As we discussed in the proof of \textbf{Theorem 6}, if we have $rank(f)$ f-monochromatic rectangles, then we are able to represent all elements on the $rank(f)$ linearly independent rows. \\
+	\\
+	For the rows other than these $rank(f)$, all of them can be written as a linear combination of some rows of the selected $rank(f)$ rows. This means the elements on these rows can be included in the previous f-monochromatic rectangles without introducing new ones. Thus, with these $rank(f)$ rectangles we will be able to contain all 1's in $\calX \times \calY$, and an extra rectangle that represents $0$s. Thus we need at most $rank(f)+1$ f-monochromatic rectangles.\\
+	\\
+	For the protocol tree, it has at most $rank(f)+1$ leaves, and for the worst case, $height(T) = rank(f)+1$. Thus $D(f) \leq rank(f)+1$.
+\end{proof}
+
+\exercises
+
+\begin{exercise} %[Hard]
+	Show that there exists a function $f$ for which $D(f) = \omega( \log_2 \rank(f) )$.
+\end{exercise}
+
+\begin{open}[Log rank conjecture]
+	Prove that there exists a constant $c > 0$ such that every function $f$ satisfies
+	\[
+	D(f) = O( \log^c \rank(f)).
+	\]
+\end{open}
+
+	
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\chapter[CH03]{Distributional communication complexity}
+
+Functions can become much easier to compute in the communication complexity setting when we allow the protocols to make some errors. We can define this formally using the notion of \emph{distributional communication complexity}. We first explore this notion in its most natural setting, which corresponds to the uniform distribution.
+\newpage
+\begin{definition}[Protocol error]
+	Fix any $\epsilon \ge 0$. A protocol $\pi$ \emph{computes} $f$ \emph{with error at most $\epsilon$ under the uniform distribution} if it correctly outputs the value $f(x,y)$ for at least an $1-\epsilon$ fraction of all inputs, i.e., if
+	\[
+	\Pr_{(x,y)}[ \pi(x,y) \neq f(x,y)] \le \epsilon
+	\]
+	when $(x,y)$ is drawn uniformly at random from $\calX \times \calY$.
+\end{definition}
+
+\begin{definition}[Uniform distributional complexity]
+	For any $\epsilon \ge 0$, the \emph{$\epsilon$-error distributional communication complexity} of $f : \mathcal{X} \times \mathcal{Y} \to \{0,1\}$ with respect to the uniform distribution,
+	\[
+	D_\epsilon^{\mathrm{unif}}(f),
+	\]
+	is the minimum communication cost of a protocol that computes $f$ with error at most $\epsilon$ under the uniform distribution.
+\end{definition}
+
+\exercises
+
+\begin{exercise}
+	Show that $D_0^{\mathrm{unif}}(f) = D(f)$ and that for every $\epsilon > 0$, 
+	$D_\epsilon^{\mathrm{unif}}(f) \le D(f)$.
+\end{exercise}
+
+\begin{exercise}
+	Show that every $f : \mathcal{X} \times \mathcal{Y} \to \{0,1\}$ satisfies
+	$D_{1/2}^{\mathrm{unif}}(f) = 0$.
+\end{exercise}
+
+
+\section{Equality III}
+
+The $\epsilon$-error distributional complexity of functions can sometimes be dramatically smaller than their deterministic complexity.
+
+\begin{theorem}
+	For any $\epsilon \ge \frac1{2^n}$, $D_\epsilon^{\mathrm{unif}}(\textsc{Equality}) = 0$.
+\end{theorem}
+
+\begin{proof}
+	Consider a protocol $p$ where Alice and Bob simply agrees on $\Eq (Alice,Bob) = 0$ without sending any bits. \\
+	\\
+	Now note that under uniform distribution, $Pr[x=y] = \frac{2^n}{2^n*2^n} = \frac{1}{2^n}$. Thus $\epsilon = \frac{1}{2^n}$, and since we sent 0 bits, $D_\epsilon^{\mathrm{unif}}(\textsc{Equality}) = 0$.
+\end{proof}
+
+
+ \section{Uniform discrepancy}
+
+The \emph{uniform discrepancy} of a function is a different way to measure how large ``nearly $f$-monochromatic'' rectangles can be. For this measure, it is convenient to represent the function with a $\pm1$-valued (instead of $\{0,1\}$-valued) matrix.
+
+\begin{definition}[$\pm 1$-Matrix of a function]
+	The \emph{$\pm 1$-matrix} $M^\pm_f$ corresponding to the function $f : \calX \times \calY \to \{0,1\}$ is the $|\calX| \times |\calY|$-dimensional $\{-1,1\}$-valued matrix with rows indexed by $\calX$ and columns indexed by $\calY$ defined by
+	\[
+	\big(M^{\pm}_f\big)_{x,y} = (-1)^{f(x,y)}
+	\]
+	for every $x \in \calX$ and $y \in \calY$.
+\end{definition}
+
+\begin{definition}[Uniform discrepancy]
+	The \emph{uniform discrepancy} of $f : \calX \times \calY \to \{0,1\}$ is
+	\[
+	\discu(f) = \max_{A \subseteq \calX, B \subseteq \calY} \frac{1}{|\calX| \, |\calY|} \left| \sum_{x \in A, y \in B} \big(M^{\pm}_f\big)_{x,y} \right|.
+	\]
+\end{definition}
+
+We can use the uniform discrepancy to bound deterministic communication complexity.
+
+\begin{theorem}
+	For every function $f : \calX \times \calY \to \{0,1\}$,
+	\[
+	\chi(f) \ge \discu(f)^{-1}
+	\] 
+	and so $D(f) \ge \log_2 \frac1{\discu(f)}$.
+\end{theorem}
+
+\begin{proof}
+	Now think about the maximum f-monochromatic rectangle $R = a \times b$ in $\calX \times \calY$. \\
+	\\
+	$\left|\sum_{x,y \in R} \big(M^{\pm}_f\big)_{x,y}\right| = \left|R\right| = m(f)$ since every entry in $R$ has the same value(-1 or 1). \\
+	Since that $\discu(f) \ge \frac{\left|\sum_{x,y \in R} \big(M^{\pm}_f\big)_{x,y}\right|}{|\calX| |\calY|} = \frac{m(f)}{|\calX| |\calY|}$, thus $\frac{1}{\discu(f)} \leq \frac{|\calX||\calY|}{m(f)}$  \\
+	and by \textbf{Lemma 2} from \textbf{Chapter 2}, we have \\
+	\\
+	$\chi(f) \ge \frac{|\calX| \, |\calY|}{m(f)} \ge \frac{1}{\discu(f)}$ and \\
+	\\
+	$D(f) \ge \log_2 \frac{|\calX| \, |\calY|}{m(f)} \ge \log_2 \frac{1}{\discu(f)}$, \\
+	\\ 
+\end{proof}
+
+
+ \section{Uniform discrepancy bound}
+
+We can also use uniform discrepancy to bound the uniform distributional  communication complexity of functions.
+
+\begin{lemma}
+	For every function $f : \calX \times \calY \to \{0,1\}$ and every $0 \le \epsilon < \frac12$, 
+	\[
+	D_\epsilon^{\mathrm{unif}}(f) \ge \log_2 \left( \frac{1-2\epsilon}{\discu(f)} \right).
+	\]
+\end{lemma}
+
+\begin{proof}
+	Since the protocol error is $\epsilon$, we have that if we draw  $x$ and $y$ uniformly at random: \\
+	$\Pr[ \pi(x,y) \neq f(x,y)] \le \epsilon$ and\\
+	$\Pr[ \pi(x,y) = f(x,y)] \ge 1-\epsilon$. \\
+	Thus $\Pr[ \pi(x,y) = f(x,y)] - \Pr[ \pi(x,y) \neq f(x,y)] \ge 1-2\epsilon$. \\
+	\\
+	Now if we divide this value by each rectangle $R$ in the protocol, we will have that \\
+	$\sum_{R} \Pr[select\ x,y] * (\Pr_{(x,y \in R)}[ \pi(x,y) = f(x,y)] - \Pr_{(x,y \in R)}[ \pi(x,y) \neq f(x,y)]) \ge 1-2\epsilon$ \\
+	$\sum_{R} \Pr[select\ x,y] * |\Pr_{(x,y \in R)}[ \pi(x,y) = f(x,y)] - \Pr_{(x,y \in R)}[ \pi(x,y) \neq f(x,y)]| \ge 1-2\epsilon$ \\
+	\\
+	Note that the term  $\Pr[select\ x,y] * |\Pr_{(x,y \in R)}[ \pi(x,y) = f(x,y)] - \Pr_{(x,y \in R)}[ \pi(x,y) \neq f(x,y)]|$ equals to $\frac{\left| \sum_{x,y \in R} \big(M^{\pm}_f\big)_{x,y} \right|}{|\calX||\calY|}$ since we can use one of $(-1,1)$ to represent the correct value and the other for incorrect ones, and the probability of selecting each one is $\frac{1}{|\calX||\calY|}$. Results will be the same since we are using absolute value. \\
+	\\
+	Thus, we have that \\
+	\\
+	$\sum_{R} \frac{\left| \sum_{x,y \in R} \big(M^{\pm}_f\big)_{x,y} \right|}{|\calX||\calY|} \ge 1-2\epsilon$\\
+	\\
+	$\sum_{R} \discu(f) \ge 1-2\epsilon$\\
+	\\
+	Say there are $\alpha$ rectangles in the protocol, then
+	$\alpha * \discu(f) \ge 1-2\epsilon$ \\ 
+	\\
+	$\alpha \ge \frac{1-2\epsilon}{\discu(f)}$ \\
+	\\
+	Then\\
+	$D_\epsilon^{\mathrm{unif}}(f) \ge \log_2 \left( \frac{1-2\epsilon}{\discu(f)} \right)$, since there are at least $\frac{1-2\epsilon}{\discu(f)}$ rectangles in any protocol.
+\end{proof}
+
+
+ \section{Inner product III}
+
+The discrepancy method can be used to give optimal bounds on the distributional communication complexity of the inner product function over the uniform distribution.
+
+\begin{theorem}
+	$\discu(\IP) \le 2^{-n/2}$ and, as a result, $D_\epsilon^{\mathrm{unif}}(\IP) \ge \Omega(n)$ for every $\epsilon < \frac12$.
+\end{theorem}
+
+\begin{proof}
+	Consider the $\pm1$-Matrix of Inner Product function $M_{ip}$. Now calculate the value $M_{ip}M_{ip}^t$, we can see that the result is a matrix full of $1$ since the inner product function is commutative which means $M_{ip(x,y)} = M_{ip(y,x)}$, thus every entry of $M_{ip}$ is either $1*1$ or $-1*-1$. Since this is equivalent to the identity matrix, we conclude that $M_{ip}$ is an orthogonal matrix. \\
+	\\
+	Now consider any rectangle in $\calX \times \calY$, say $R = a \times b$. We calculate the discrepancy of $R$, say this value is $d$. \\
+	\\
+	$d = \frac{1}{|\calX||\calY|}|\sum_{x \in a,y \in b} \big(M_{ip}\big)_{x,y}|$ \\
+	\\
+	$= \frac{1}{2^n*2^n}1_a^tM_{ip}1_b$\\
+	\\
+	$\leq \frac{1}{2^{2n}}\left\lVert 1_a\right\rVert \left\lVert M_{ip}1_b\right\rVert$\\
+	\\
+	$= \frac{1}{2^{2n}}\sqrt{1_a1_a}\sqrt{M_{ip}1_bM_{ip}1_b}$\\
+	\\
+	$\leq \frac{1}{2^{2n}}\sqrt{2^n}\sqrt{M_{ip}1_bM_{ip}1_b}$ \\
+	\\
+	$= \frac{1}{2^{2n}}\sqrt{2^n}\sqrt{1_b^tM_{ip}^tM_{ip}1_b}$ \\
+	\\
+	$\leq \frac{1}{2^{2n}}\sqrt{2^n}\sqrt{1_b^t2^nI1_b}$\\ 
+	\\
+	$\leq \frac{1}{2^{2n}}\sqrt{2^n}\sqrt{2^n*2^n}$\\
+	\\
+	$= \frac{1}{2^{n/2}} = 2^{-n/2}$\\
+	\\
+	Since discrenpancy of any rectangle $\leq 2^{-n/2}$, we conclude that $\discu(IP) \leq 2^{-n/2}$, and \textbf{Lemma 1}, $D_\epsilon^{\mathrm{unif}}(\IP) \ge \log_2(\frac{1-2\epsilon}{\discu(IP)}) \ge \log_2(\frac{1-2\epsilon}{2^{-n/2}}) \ge \Omega(n)$
+\end{proof} 
+
+
+ \section{Distributional complexity}
+
+The definitions we have seen so far in this chapter all generalize to arbitrary distributions over the domain of the function.
+
+\begin{definition}[Protocol error]
+	Fix any $\epsilon \ge 0$. A protocol \emph{computes} $f : \calX \times \calY \to \{0,1\}$ \emph{with error at most $\epsilon$ under the distribution $\mu$ on $\calX \times \calY$} if it correctly outputs the value $f(x,y)$ for at least a $1-\epsilon$ measure of all inputs in $\mu$, i.e., if
+	\[
+	\Pr_{(x,y) \sim \mu}[ \pi(x,y) \neq f(x,y) ] \le \epsilon.
+	\]
+\end{definition}
+
+\begin{definition}[Distributional complexity]
+	For any $\epsilon \ge 0$, the \emph{$\epsilon$-error distributional communication complexity} of $f : \calX \times \calY \to \{0,1\}$ with respect to the distribution $\mu$ on $\calX \times \calY$,
+	\[
+	D_\epsilon^{\mu}(f),
+	\]
+	is the minimum communication cost of a protocol that computes $f$ with error at most $\epsilon$ under the distribution $\mu$.
+\end{definition}
+
+\begin{definition}[$\mu$-Discrepancy]
+	For any distribution $\mu$ on $\calX \times \calY$, 
+	the \emph{$\mu$-discrepancy} of $f : \calX \times \calY \to \{0,1\}$ is
+	\[
+	\disc_\mu(f) = \max_{A \subseteq \calX, B \subseteq \calY} 
+	\left| \mu\big( (A \times B) \cap f^{-1}(0) \big) - \mu\big( (A \times B) \cap f^{-1}(1)\big) \right|.
+	\]
+\end{definition}
+
+\begin{theorem}
+	For every function $f : \calX \times \calY \to \{0,1\}$ and every distribution $\mu$ over $\calX \times \calY$, 
+	\[
+	\chi(f) \ge \disc_\mu(f)^{-1}
+	\] 
+	and so $D(f) \ge \log_2 \frac1{\disc_\mu(f)}$.
+\end{theorem}
+
+\begin{proof}
+	Consider the f-monochromatic rectangle $R = a \times b$ in $\calX \times \calY$ with maximum size under distribution $\mu$, like \textbf{Definition 3} from \textbf{Chapter 2} defined, we say the size of $R$ is $m_{\mu}(f)$.\\
+	\\
+	Now consider the $\mu$-discrepancy of $R$, since the values in $R$ are of the same, $\mu$-discrepancy of $R$ should be equal to $m_{\mu}(f)$. And we have $\disc_\mu(f) \ge \mu$-discrepancy of $R \ge m_{\mu}(f)$.\\
+	\\
+	By \textbf{Lemma 3} from \textbf{Chapter 2}, we have $\chi(f) \ge \frac{1}{m_\mu(f)} \ge \disc_\mu(f)^{-1}$,\\
+	\\
+	And $D(f) \ge \log_2 \frac{1}{m_\mu(f)} \ge \log_2 \disc_\mu(f)^{-1}$
+	
+\end{proof}
+
+\exercises
+
+\begin{exercise}
+	Show that when $\mu$ is the uniform distribution over $\calX \times \calY$, the definitions of $\mu$-discrepancy and uniform discrepancy are equivalent.
+\end{exercise}
+
+\begin{exercise}
+	Show that for every distribution $\mu$, $D^\mu_\epsilon(f) \le D(f)$.
+\end{exercise}
+
+
+ \section{Discrepancy bound}
+
+The $\mu$-discrepancy of a function can be used to give lower bounds on its $\mu$-distributional communication complexity.
+
+\begin{lemma}
+	For every function $f : \calX \times \calY \to \{0,1\}$, every distribution $\mu$ on $\calX \times \calY$, and every $0 \le \epsilon < \frac12$,
+	\[
+	D_\epsilon^{\mu}(f) \ge \log_2 \left( \frac{1-2\epsilon}{\disc_\mu(f)} \right).
+	\]
+\end{lemma}
+
+\begin{proof}
+	Since the protocol error is $\epsilon$, we have that if we draw  $x$ and $y$ by a distribution $\mu$: \\
+	$\Pr[ \pi(x,y) \neq f(x,y)] \le \epsilon$ and\\
+	$\Pr[ \pi(x,y) = f(x,y)] \ge 1-\epsilon$. \\
+	Thus $\Pr[ \pi(x,y) = f(x,y)] - \Pr[ \pi(x,y) \neq f(x,y)] \ge 1-2\epsilon$. \\
+	\\
+	Now if we divide this value by each rectangle $R$ in the protocol, we will have that \\
+	$\sum_{R} \Pr[select\ x,y] * (\Pr_{(x,y \in R)}[ \pi(x,y) = f(x,y)] - \Pr_{(x,y \in R)}[ \pi(x,y) \neq f(x,y)]) \ge 1-2\epsilon$ \\
+	$\sum_{R} \Pr[select\ x,y] * |\Pr_{(x,y \in R)}[ \pi(x,y) = f(x,y)] - \Pr_{(x,y \in R)}[ \pi(x,y) \neq f(x,y)]| \ge 1-2\epsilon$ \\
+	\\
+	Note that the term  $\Pr[select\ x,y] * |\Pr_{(x,y \in R)}[ \pi(x,y) = f(x,y)] - \Pr_{(x,y \in R)}[ \pi(x,y) \neq f(x,y)]|$ equals to ${\left| \sum_{x,y \in R} \mu(x,y)\big(M^{\pm}_f\big)_{x,y} \right|}$ since we can use one of $(-1,1)$ to represent the correct value and the other for incorrect ones, and the probability of selecting each one is $\mu(x,y)$. Results will be the same since we are using absolute value. \\
+	\\
+	Thus, we have that \\
+	\\
+	$\sum_{R} {\left| \sum_{x,y \in R} \mu(x,y)\big(M^{\pm}_f\big)_{x,y} \right|} \ge 1-2\epsilon$\\
+	\\
+	$\sum_{R} \disc_\mu(f) \ge 1-2\epsilon$\\
+	\\
+	Say there are $\alpha$ rectangles in the protocol, then
+	$\alpha * \disc_\mu(f) \ge 1-2\epsilon$ \\ 
+	\\
+	$\alpha \ge \frac{1-2\epsilon}{\disc_\mu(f)}$ \\
+	\\
+	Then\\
+	$D_\epsilon^{\mathrm{unif}}(f) \ge \log_2 \left( \frac{1-2\epsilon}{\disc_\mu(f)} \right)$, since there are at least $\frac{1-2\epsilon}{\disc_\mu(f)}$ rectangles in any protocol.
+\end{proof}
+
+
+ \section{Equality IV}
+
+Using the discrepancy bound, we can show that there are distributions for which the equality function requires Alice and Bob to exchange \emph{some} bits of communication to obtain a non-trivial error.
+
+\begin{theorem}
+	There exists a distribution $\mu$ over $\{0,1\}^n \times \{0,1\}^n$ for which 
+	$
+	\disc_\mu(\Eq) \leq \frac18*\frac{2^n}{2^n-1}
+	$
+	and so
+	\[
+	D^\mu_\epsilon(\Eq) \ge 1
+	\]
+	for every $\epsilon \le \frac38$.
+\end{theorem}
+
+\begin{proof}
+	Consider the following distribution $\mu$: \\
+	\\
+	$\mu(x,y) = \frac{1/2}{2^n} = \frac{1}{2^{n+1}}$ if $EQ(x,y) = 1$,\\
+	$\mu(x,y) = \frac{1/2}{2^{2n}-2^n} = \frac{1}{2^{2n+1}-2^{n+1}}$ otherwise. \\
+	\\
+	Now we calculate the $\mu$-discrepancy of $EQ$. \\
+	\\
+	First think of a rectangle containing total of $i$ 1's, then by the structure of rectangles from $EQ(x,y)$, we know that it has at least $(i-1)i$ 0's. This gives the discrepancy of \\
+	\\
+	$\frac{(i-1)i}{2^{2n+1}-2^{n+1}}-\frac{i}{2^{n+1}} = \frac{i(i-2^n)}{2^{n+1}(2^n-1)}$ Note the value is negative.\\
+	\\
+	Since choosing $i=2^{n-1}$ will make this term has the maximum absolute value, we have discrepancy\\
+	\\
+	$\leq |\frac{2^{n-1}(2^{n-1}-2^n)}{2^{n+1}(2^n-1)}| = \frac14|\frac{2^{n-1}-2^{n}}{2^{n}-1}| \leq \frac18|\frac{2^{n}-2^{n+1}}{2^{n}-1}| \leq \frac18*\frac{2^n}{2^n-1}$\\
+	\\
+	Now think of a rectangle containing only 0's, the largest possible one should be of size $2^{n-1}*2^{n-1}$ since the column and rows cannot share any index, and to maximize such a rectangle is to make it a square. \\ 
+	\\
+	For this rectangle, the $\mu$-discrepancy is easy to calculate: \\
+	\\
+	$2^{n-1}*2^{n-1}*\frac{1}{2^{2n+1}-2^{n+1}} = \frac{2^{2n-2}}{2^{2n+1}-2^{n+1}} = \frac18*\frac{2^n}{2^n-1}$\\
+	\\
+	Now consider any other rectangle, they must be a combination of the above two cases:\\
+	\\
+	For the rows with 1, they form a square with potentially a tailing rectangle full of 0's. The rest of the rows forms a rectangle filled with 0's. Note that adding these discrepancy yield a smaller value since for the above two cases we have opposite signs. Thus for any rectangle in $EQ(x,y)$, we have $\mu$-discrepancy $\leq \frac18*\frac{2^n}{2^n-1}$. In other words, $\disc_\mu(\Eq) \leq \frac18*\frac{2^n}{2^n-1}$. And plugging this result into \textbf{Lemma 2} yields $D^\mu_\epsilon(\Eq) \ge 1$.
+\end{proof}
+
+
+
+ \section{Equality V}
+
+Show that the bound in the last section is essentially tight in that the distributional communication complexity of the equality function is constant when $\epsilon$ is a positive constant.
+
+\begin{theorem}
+	For every distribution $\mu$ over $\{0,1\}^n \times \{0,1\}^n$,
+	\[
+	D^\mu_{1/4}(\Eq) = O(1).
+	\]
+\end{theorem}
+
+\begin{proof}
+	If Alice and Bob shares randomness, then we can use the following protocol:\\
+	\\
+	Alice and Bob agree on two randomly selected subsets of $n$-bit binary string, then Alice XORs bits from each subset together. Then send the two results to Bob. Bob calculate the sum of same subsets and compare them to the results Alice sent, then:\\ 
+	\\
+	If both bits equal to Alice's, return 1 to Alice\\
+	\\
+	Otherwise, return 0 to Alice.\\
+	\\
+	Note this protocol sends only 3 bits, so the distribution communication complexity is $O(1)$. Now we calculate the error probability: \\
+	\\
+	Let $h_s(x)$ be one of the result from Alice using subset$s$, $h_s(y)$ be the result from same subset from Bob. Assume $x \neq y$. \\
+	Let E be the event where $h_s(x) = h_s(y)$, let F be the event where $h_{s\ without\{i\}}(x)=h_{s\ without\{i\}}(y)$.\\
+	\\
+	$Pr[E] = Pr[F]*Pr[E|F] + Pr[\overline{F}]*Pr[E|\overline{F}]$\\
+	\\
+	$=Pr[F]*Pr[i \in s] + Pr[\overline{F}]*Pr[i \in s]$\\
+	\\
+	$=Pr[F]*\frac12+Pr[\overline{F}]*\frac12 = \frac12$\\
+	\\
+	And the probability of both time fail is $\frac14$. Since we have correct result with probability 1 when $x = y$ and probability $\frac34$ when $x \neq y$, we have $\epsilon = \frac14$.\\ 
+	\\
+	Thus $D^\mu_{1/4}(\Eq) = O(1)$.
+\end{proof}
+
+
+
+ \section{Corruption bound}
+
+The \emph{corruption bound} is another powerful technique for proving lower bounds in distributional communication complexity.
+
+\begin{lemma}
+	Fix a function $f : \calX \times \calY \to \{0,1\}$ and a distribution
+	$\mu$ on $\calX \times \calY$.
+	If there exist parameters $\alpha, \beta > 0$ for which
+	every rectangle $R \subseteq \calX \times \calY$ satisfies 
+	\[
+	\mu(R \cap f^{-1}(0)) \ge \alpha \cdot \mu(R) - \beta
+	\]
+	then
+	\[
+	D^\mu_\epsilon(f) \ge \log\left( \frac{\alpha \cdot \mu(f^{-1}(1)) - \epsilon}{\beta}\right).
+	\]
+\end{lemma}
+
+\begin{proof}
+	First we sum up $\mu(R \cap f^{-1}(0))$ for all rectangles $R$ in a protocol:\\
+	\\
+	$\sum_R\mu(R \cap f^{-1}(0))$\\
+	\\
+	$= \mu(f^{-1}(0))$\\
+	\\
+	$\ge \sum_R \alpha \cdot \mu(R) - \beta$\\
+	\\
+	$= \sum_R \alpha \cdot (\mu(R \cap f^{-1}(0))+\mu(R \cap f^{-1}(1))) - \beta $ if there are $d$ rectangles\\
+	\\
+	$= \alpha \mu(f^{-1}(0))+\alpha \mu(f^{-1}(1)) - d*\beta$\\
+	\\
+	Now since we have $\mu(f^{-1}(0)) \ge \alpha \mu(f^{-1}(0))+\alpha \mu(f^{-1}(1)) - d*\beta$ \\
+	\\
+	$d \ge \frac{(\alpha-1) \mu(f^{-1}(0))+\alpha \mu(f^{-1}(1))}{\beta}$\\
+	\\
+	$\ge \frac{\alpha \mu(f^{-1}(1))}{\beta}$ since $\alpha \leq 1$ \\
+	\\
+	$\ge \frac{\alpha \mu(f^{-1}(1))-\epsilon}{\beta}$\\
+	\\
+	And since the number of rectangles is at least $\frac{\alpha \mu(f^{-1}(1))-\epsilon}{\beta}$, $D^\mu_\epsilon(f) \ge \log\left( \frac{\alpha \cdot \mu(f^{-1}(1)) - \epsilon}{\beta}\right)$.
+\end{proof}
+
+
+
+ \section{Set Disjointness II}
+
+The corruption bound can be used to prove a strong lower bound on the distributional communication complexity of the set disjointness function. The key claim that is used to obtain this result is the following combinatorial statement.
+
+\begin{proposition}
+	For every $\alpha>0$, there exists a $\delta>0$ such that every rectangle $R = A \times B \subseteq 2^{[n]} \times 2^{[n]}$
+	that satisfies 
+	\[
+	\Pr_{(S,T) \in R}[ S \cap T = \emptyset ] \ge 1-\alpha
+	\]
+	has size bounded by
+	\[
+	|A| \le 2^{-\delta \sqrt{n}} \binom{n}{\sqrt{n}}
+	\qquad \mbox{or} \qquad
+	|B| \le 2^{-\delta \sqrt{n}} \binom{n}{\sqrt{n}}.
+	\]
+\end{proposition}
+
+Use the claim to complete the lower bound on the communication complexity of the set disjointness function.
+
+\begin{theorem}
+	Let $\mu$ be the uniform distribution on pairs $(S,T) \in 2^{[n]} \times 2^{[n]}$ that satisfy $|S| = |T| = \sqrt{n}$. Then
+	\[
+	D_\epsilon^{\mu}(\textsc{Disj}) \ge \Omega(\sqrt{n}).
+	\]
+\end{theorem}
+
+\begin{proof}
+	First we consider the value of $\mu(R \cap f^{-1}(0))$:\\
+	\\
+	$\mu(R \cap DISJ^{-1}(0)) = \mu(R) \cdot Pr[DISJ(x,y) = 0|x,y \in R] \ge \mu(R) \cdot \alpha \ge \alpha \cdot \mu(R) - \beta$ for any $\beta > 0$ if we use the same $\alpha$ for both equations.\\
+	\\
+	Thus, by \textbf{Lemma 3}, we have that $D^\mu_\epsilon(DISJ) \ge \log\left( \frac{\alpha \cdot \mu(DISJ^{-1}(1)) - \epsilon}{\beta}\right)$.\\ 
+	\\
+	By \textbf{Proposition 1} we have that $|S| = |T| = \sqrt{n}$, so we can conclude that \\
+	\\
+	$D^\mu_\epsilon(DISJ) \ge \log \frac{\alpha \cdot 2^{\sqrt{n}} - \epsilon}{\beta} = \Omega(\sqrt{n})$
+\end{proof}
+
+	
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+\chapter[CH04]{Randomized communication complexity}
+
+
+
+Until now, we have been focused on deterministic communication protocols. In this chapter, we study \emph{randomized} communication protocols. We first focus on what is known as the \emph{public-randomness model} of communication. 
+
+
+\newpage
+
+\begin{definition}[Randomized protocol]
+	A \emph{randomized communication protocol} $\Pi$ is a distribution over deterministic communication protocols. The \emph{(worst-case) cost} of $\Pi$ is the maximum cost of any protocol in its support. The randomized protocol $\Pi$ \emph{computes} $f : \calX \times \calY \to \{0,1\}$ with error at most $\epsilon$ if for every $(x,y) \in \calX \times \calY$,
+	\[
+	\Pr_{\pi \sim \Pi}[ \pi(x,y) \neq f(x,y) ] \le \epsilon.
+	\]
+\end{definition}
+
+
+\begin{definition}[Randomized communication complexity]
+	For $0 < \epsilon < \frac12$, the \emph{randomized communication complexity} of $f : \calX \times \calY \to \{0,1\}$ at error $\epsilon$ is
+	\[
+	R_\epsilon(f) := \min_{\Pi} \cost(\Pi)
+	\]
+	where the minimum is taken over all randomized communication protocols that compute $f$ with error at most $\epsilon$.
+\end{definition}
+
+\begin{remark}
+	The notation for randomized communication complexity can vary. In Kushilevitz and Nisan, for instance, the randomized communication complexity defined above is written as $R^{\mathrm{pub}}_\epsilon$ and our symbol $R_\epsilon$ is reserved for another model of randomized communication (namely: the private randomness model we will see at the end of the chapter).
+\end{remark}
+
+\exercises
+
+\begin{exercise}
+	Another way to define randomized communication protocols is to consider a model where Alice and Bob have access to their respective inputs \emph{and} to a common sequence of coins that are flipped at random. Show that this model is equivalent to the one described above.
+\end{exercise}
+
+\begin{exercise}
+	Show that with the definition above, $R_0(f) = D(f)$ always holds. For this reason, $R_0(f)$ is usually reserved to the randomized model of communication where the cost of $\Pi$ on input $(x,y)$ is defined to be the \emph{average} cost of the protocols in the support of $\Pi$.
+\end{exercise}
+
+
+ 
+\section{Randomized and distributional complexity}
+
+Lower bounds in randomized communication complexity are often (usually?) obtained by establishing the lower bounds in the distributional communication complexity model instead. This approach is justified by the following relation, which is sometimes referred to as \emph{(the easy direction of) Yao's minimax principle}.
+
+\begin{theorem}
+	For every $0 \le \epsilon \le \frac12$, every function $f : \calX \times \calY \to \{0,1\}$, and every distribution $\mu$ over $\calX \times \calY$,
+	\[
+	R_\epsilon(f) \ge D_\epsilon^\mu(f).
+	\]
+\end{theorem}
+
+\begin{proof}
+	Assume we have a protocol has distributional communication complexity of $D_\epsilon^\mu(f)$ for some distribution $\mu$. This means that the protocol is able to compute $f$ with error probability $\epsilon$ under distribution $\mu$ with run time $D_\epsilon^\mu(f)$. \\
+	\\
+	Now by way of contradiction, assume $R_\epsilon(f) < D_\epsilon^\mu(f)$ for some $f$ and $\mu$. Then there exists an protocol inside the distribution that computes $f$ under $\mu$ faster than $D_\epsilon^\mu(f)$. However, this means that this deterministic protocol is faster than the lower bound of all deterministic protocol that compute $f$. So by contradiction, $R_\epsilon(f) \ge D_\epsilon^\mu(f)$.
+\end{proof}
+
+
+ 
+\section{Yao's minimax principle}
+
+Yao's minimax principle says something quite a bit stronger than the bound seen in the last chapter: it says that the randomized communication complexity of a function is \emph{equal} to the maximum distributional complexity of the function over any distributions on its domain.
+
+\begin{theorem}
+	For every $0 \le \epsilon \le \frac12$ and every function $f : \calX \times \calY \to \{0,1\}$, 
+	\[
+	R_\epsilon(f) = \max_{\mu} D_\epsilon^\mu(f)
+	\]
+	where the maximum is taken over all distributions on $\calX \times \calY$.
+\end{theorem}
+
+\begin{proof}
+	(Method1)First consider the protocol $\pi$ that computes $f$ with run time $t=\max_{\mu} D_\epsilon^\mu(f)$ under some distribution $\mu'$. \\
+	\\
+	Then since randomized communication protocol is a distribution over deterministic communications, consider the randomized communication protocol where the distribution is simply using $\pi$ with probability $1$. The run time will be less or equal to $t$ under any distribution since $t$ was taken maximum over all distributions. \\
+	\\
+	Thus, since $R_\epsilon(f)$ was taken minimum among all distributions of deterministic protocols, $R_\epsilon(f) 
+	\leq \max_{\mu} D_\epsilon^\mu(f)$. Combining this result with \textbf{Theorem 1}, $R_\epsilon(f) = \max_{\mu} D_\epsilon^\mu(f)$.\\
+	 \\
+	(Method2)Let $\Pi$ be a protocol computing $f$ with $R_\epsilon(f)$, and let $R$ be the public randomness used by $\Pi$, then for any input $(x,y)$ we have that \\
+	 \\ 
+	$\mathds{1}(\Pi_R(x,y)\neq f(x,y))\leq \epsilon$\\
+	dist $\zeta$.\\
+    $\mathbb{E}_{(x,y)\sim \zeta}\ \mathbb{E}_R\ \mathds{1}(\Pi_R(x,y)\neq f(x,y))\leq \epsilon$\\
+    $\mathbb{E}_R\ \mathbb{E}_{(x,y)\sim \zeta}\  \mathds{1}(\Pi_R(x,y)\neq f(x,y))\leq \epsilon$\\
+    $\mathbb{E}_{(x,y)\sim \zeta}\  \mathds{1}(\Pi_R(x,y)\neq f(x,y))\leq \epsilon$\\
+\end{proof}
+
+
+ 
+\section{Error reduction}
+
+The randomized communication complexity functions is usually studied in the setting where $\epsilon = \frac13$. In fact, this is so common that shorthand notation is used for that case.
+
+\begin{definition}
+	The \emph{(two-sided error) randomized communication complexity} of $f : \calX \times \calY \to \{0,1\}$ is
+	\[
+	R(f) = R_{1/3}(f).
+	\]
+\end{definition}
+
+The reason most of the work focuses on this particular choice of $\epsilon$ is that a general transformation can be used to bound $R_\epsilon(f)$ for any $\epsilon > 0$ as a function of $R(f)$. This result is sometimes known as the \emph{(majority) confidence amplification} trick.
+
+\begin{theorem}
+	For every function $f : \calX \times \calY \to \{0,1\}$ and every $0 < \epsilon < \frac12$, 
+	\[
+	R_\epsilon(f) = O\left( R(f) \cdot \log \tfrac1\epsilon \right).
+	\]
+\end{theorem}
+
+\begin{proof}
+	Consider the following way to reduce error: \\
+	\\
+	we run the protocol $f$ for $i$ times, then it returns $1$ if more than half results are $1$ and vice versa. \\
+	\\
+	Now by Hoeffding's Inequality, $Pr[\frac{1}{m}\sum_{i=1}^m X_i \ge \frac12] \leq e^{-\frac{m}{18}}$. \\
+	\\
+	To bound this error probability below $\epsilon$, we should have\\
+	\\
+	$e^{-\frac{m}{18}} \leq \epsilon$\\
+	$-\frac{m}{18} \leq \ln \epsilon$\\
+	$m\ge -18\ln \epsilon$ \\
+	$m\ge 18\ln \frac{1}{\epsilon} = O(\log\frac{1}{\epsilon})$\\
+	\\
+	So if we repeat the protocol with error probability $\frac13$ for $O(\log\frac{1}{\epsilon})$ times, we will have error probability of $\epsilon$, which gives run time  $O\left( R(f) \cdot \log \tfrac1\epsilon \right)$.
+\end{proof}
+
+\exercises
+
+\begin{exercise}
+	Extend the result in the theorem to show that for every $\delta > 0$, we also have
+	\[
+	R_\epsilon(f) = O\left( R_{\frac12 - \delta}(f) \cdot \phi(\epsilon,\delta) \right)
+	\]
+	for some appropriate function $\phi$ on $\epsilon$ and $\delta$.
+\end{exercise}
+
+
+ 
+\section{Equality VI}
+
+
+\begin{theorem}
+	For every $0 < \epsilon < \frac12$,
+	\[
+	R_\epsilon(\Eq) = O\left(\log \tfrac1\epsilon \right).
+	\]
+\end{theorem}
+
+\begin{proof}
+	Using the same protocol and proof from Question \textbf{Equality V}, we have that $D_{1/4}^{\mu}(EQ) = O(1)$. \\
+	\\
+	By Yao's Minimax Principle, we also have $R_{1/4}(EQ) = O(1)$, and since $1/4 \leq 1/3$, $R(f) = O(1)$\\
+	\\
+	By \textbf{Theorem 3}, we have $R_{\epsilon}(EQ) = O(R(EQ) \cdot \log \frac{1}{\epsilon}) = O(\frac{1}{\epsilon})$.
+\end{proof}
+
+
+ 
+\section{Greater than II}
+
+Recall that the function $\GT : [2^n] \times [2^n] \to \{0,1\}$ is defined by
+\[
+\GT(x,y) = \begin{cases}
+1 & \mbox{if } x > y \\
+0 & \mbox{otherwise.}
+\end{cases}
+\]
+We saw in Chapter 2 that the deterministic communication complexity of this function is $\Theta(n)$. Its randomized communication complexity is much smaller.
+
+\begin{theorem}
+	The randomized communication complexity of $\GT : [2^n] \times [2^n] \to \{0,1\}$ is bounded above by
+	\[
+	R(\GT) = O\left(\log^2 n \right).
+	\]
+\end{theorem}
+
+\begin{proof}
+	Note that the problem of GT is actually looking for the first bit where $x$ and $y$ differs. \\
+	Now consider the following protocol: \\
+	\\
+	If the length of current bit string is $1$, compare the two bits and return the result\\
+	Run EQUALITY on the first half of $x$ and $y$\\
+	If they are equal, repeat the same protocol for the second half of $x$ and $y$\\
+	Otherwise, repeat the same protocol for the first half of $x$ and $y$\\
+	\\
+	The algorithm is basically a binary search for the first bit where $x$ and $y$ differs using EQUALITY function and the protocol will return the correct value if all EQUALITY function returns correct value. \\
+	In other words, this happens when no EQUALITY function returns false value, say each with probability $\epsilon$. By Union Bound, the probability will be less or equal to $\log n\cdot\epsilon \leq \frac13$. If we want to achieve this inequality, we need to have $\epsilon \frac{1}{3\log n}$, and by \textbf{Theorem 3}, this require us to run EQUALITY for $\log 3\log n$ times which gives run time $O(\log \log n)$ for each round. This gives us a run time of $O(\log n \log \log n)$ with less than or equal to $\frac13$ error probability.\\
+	\\
+	Thus, $R(\GT) = O\left(\log n \log \log n \right)$.
+\end{proof}
+
+\exercises
+
+\begin{exercise}
+	Improve the upper bound to show $R(\GT) = O\left(\log n \log \log n \right)$.
+\end{exercise}
+
+\begin{exercise}
+	Prove that $R(\GT) = \Theta\left(\log n \right)$.
+\end{exercise}
+
+
+ 
+\section{Hamming distance}
+
+The \emph{$k$-Hamming distance} function $\HD_k : \{0,1\}^n \times \{0,1\}^n \to \{0,1\}$ is defined by
+\[
+\HD_k(x,y) = \begin{cases}
+1 & \mbox{if } |\{i \in [n] : x_i \neq y_i\}| \le k \\
+0 & \mbox{otherwise.}
+\end{cases}
+\]
+
+\begin{theorem}
+	For every $1 \le k \le \frac n2$,
+	\[
+	R(\HD_k) = O( k \log k).
+	\]
+\end{theorem}
+
+\begin{proof}
+	Consider following protocol:\\
+	\\
+	Make $8k^2$ groups, insert each index in $[n]$ into one of the $8k^2$ groups chosen uniformly at random. This result is shared by Alice and Bob.\\
+	\\
+	For each group, Alice and Bob add all bits from the indices inside together.\\
+	\\
+	For the result binary string, Alice and Bob use binary search and EQUALITY to find the groups that differ. Remove such a bit if it's found. Repeat this $k+1$ times or until $x=y$.\\
+	\\
+	If the protocol didn't reach the $k+1$th step, return $1$, otherwise returns 0.\\
+	\\
+	The run time is clearly $O(klogk^2) = O(klogk)$.\\
+	\\
+	Now we calculate the probability that two index are in the same group where bits from$x$ and $y$ differ at both: \\
+	\\
+	$Pr[Two\ indices\ are\ in\ the\ same\ group] = \frac{1}{8k^2}\cdot\frac{1}{8k^2}\cdot8k^2 = \frac{1}{8k^2}$ \\
+	\\
+	And by union bound, this does not happen to any pair of indices is $\binom{n}{2}\frac{1}{8k^2} \leq \binom{n}{2}\frac{1}{2n^2} \leq \frac14$, it gives that any pair of groups either differ by one or zero elements. Thus they must have different parity, and the total number of difference will be sum of these bits as a real number. \\
+\end{proof}
+
+
+ 
+\section{Private randomness}
+
+In the beginning of the chapter, we saw that the (public-coin) randomized communication model corresponds to the model where some coins are flipped and both Alice and Bob see the outcome of those coin flips. It is natural to study the alternative model where Alice and Bob both have access to coins they can flip (or, more abstractly, to some sources of randomness), but they each only see the outcome of their own coin flips. This model of communication corresponds to the \emph{private-coin randomized communication} model.
+
+\begin{definition}
+	A \emph{private-coin randomized communication protocol} $\pi$ is equivalent to a deterministic communication protocol with the two additions: 
+	\begin{enumerate}
+		\item Each of Alice's internal node $v$ is labelled with a function $h_v : \calX \times R_A \to \{0,1\}$ and each of Bob's internal node $w$ is labelled with a function $h_v : \calY \times R_B \to \{0,1\}$; 
+		\item Alice has a distribution $\mu_A$ over $R_A$ and Bob has a distribution $\mu_B$ over $R_B$.
+	\end{enumerate}
+	The \emph{(worst-case) cost} of $\Pi$ is the maximum cost of any protocol in its support. The randomized protocol $\Pi$ \emph{computes} $f : \calX \times \calY \to \{0,1\}$ with error at most $\epsilon$ if for every $(x,y) \in \calX \times \calY$,
+	\[
+	\Pr_{r_a \sim \mu_A, r_b \sim \mu_B}[ \pi(x,y) \neq f(x,y) ] \le \epsilon.
+	\]
+\end{definition}
+
+
+\begin{definition}[Private-coin randomized communication complexity]
+	For $0 < \epsilon < \frac12$, the \emph{private coin randomized communication complexity} of $f : \calX \times \calY \to \{0,1\}$ at error $\epsilon$ is
+	\[
+	\Rpriv_\epsilon(f) := \min_{\Pi} \cost(\Pi)
+	\]
+	where the minimum is taken over all private-coin randomized communication protocols that compute $f$ with error at most $\epsilon$.
+\end{definition}
+
+\begin{remark}
+	As in the public-coin setting, we write $\Rpriv(f) := \Rpriv_{1/3}(f)$.
+\end{remark}
+\exercises
+
+\begin{exercise}
+	Show that for every function $f$ and every parameter $\epsilon > 0$, 
+	$R_\epsilon(f) \le \Rpriv_\epsilon(f)$.
+\end{exercise}
+
+\begin{exercise}
+	Show that error amplification also holds in the private coin model: for every $\epsilon > 0$, $\Rpriv_\epsilon(f) = O(\Rpriv(f) \log \frac1\epsilon)$.
+\end{exercise}
+
+
+ 
+\section{Newman's theorem}
+
+The gap between the public-coin and private-coin randomized communication complexities of a function cannot be arbitrarily large. 
+
+\begin{theorem}
+	For every distribution $\mu$ over $\{0,1\}^n \times \{0,1\}^n$ and every constant $\epsilon > 0$,
+	\[
+	\Rpriv_{2\epsilon}(f) \le R_\epsilon(f) + O\left(\log \frac{n}{\epsilon^2}\right).
+	\]
+\end{theorem}
+
+\begin{proof}
+	Consider we drawn $t = n/\epsilon^2$ random strings independently at random. \\
+	\\
+	Now for the public coin protocol using these strings, the error probability is smaller than or equal to $\epsilon$ for every $(x,y)$. We fix any pair of $(x,y)$ consider the probability that $2\epsilon$ of the $t$ giving incorrect output for $(x,y)$:\\
+	\\
+	By Chernoff Bound and $\delta = \frac{\epsilon}{1-\epsilon} \leq \epsilon$,\\
+	$Pr[X \leq (1-\delta)\mu] \leq e^{-\frac{\delta^2\mu}{2}} = e^{-\frac{\frac{\epsilon^2}{(1-\epsilon)^2}(1-\epsilon) t}{2}}$\\
+	\\
+	Since we set $t = n/\epsilon^2$,\\
+	$Pr[X \leq (1-\delta)\mu] \leq e^{-\frac{\frac{\epsilon^2}{(1-\epsilon)^2}(1-\epsilon)  n/\epsilon^2}{2}} = e^{O(n)}$\\
+	\\
+	Now by Union bound, \\
+	$Pr[error\ probability\ >\ 2\epsilon] \leq \binom{t}{2\epsilon t}e^{O(n)} \leq \frac14$ for some O(n)\\
+	\\
+	Since in all the $t$ select strings, at most $2\epsilon$ gives incorrect results, Alice can just draw from these $t$ strings uniformly at random and send it to Bob, which takes $O(\log \frac{n}{\epsilon^2})$ extra time. Then Alice and Bob have some shared randomness and thus be able to compute $f$ with $R_\epsilon(f)$ run time.
+\end{proof}
+
+\bigskip
+\begin{remark}
+	\emph{Hint.} First consider what happens when you run a public-coin randomized protocol on $t = n/\epsilon^2$ random strings drawn independently at random. Then Chernoff bounds and the probabilistic method may be useful in completing the proof.
+\end{remark}
+
+
+ 
+\section{Private-coin randomness and determinism}
+
+Interestingly (and unlike in the public-coin model), the gap between the private-coin randomized and deterministic communication complexities of a function also cannot be arbitrarily large. 
+
+\begin{theorem}
+	For every function $f : \{0,1\}^n \times \{0,1\}^n \to \{0,1\}$,
+	\[
+	\Rpriv(f) = \Omega( \log D(f)).
+	\]
+\end{theorem}
+
+\begin{proof}
+	Consider the communication setting where Alice and Bob can send real numbers with cost O(1):\\
+	\\
+	There exists a private-coin randomized protocol with run time $t = \Rpriv(f)$ that computes $f$ with error probability less than or equal to $1/3$.\\
+	\\
+	Since we are able to send real numbers in O(1) time, then we know the private-coin randomized protocol sent $t$ real numbers in order to ensure an error probability of less than or equal to 1/3. \\
+	
+\end{proof}
+
+\bigskip
+\begin{remark}
+	\emph{Hint.} It might be easiest to first consider a communication setting where Alice and Bob can send real numbers with cost $O(1)$ and show that in this setting there is a deterministic protocol that computes $f$ with cost $O(2^{\Rpriv(f)})$.
+\end{remark}
+
+ 
+\section{Equality VII}
+
+We can use the results obtained in the previous sections to obtain tight bounds on the private-coin randomized communication complexity of the equality function.
+
+\begin{theorem}
+	The private-coin randomized communication complexity of the $\Eq : \{0,1\}^n \times \{0,1\}^n \to \{0,1\}$ function is
+	\[
+	\Rpriv(\Eq) = \Theta( \log n).
+	\]
+\end{theorem}
+
+\begin{proof}
+	First by \textbf{Theorem 8}, $\Rpriv(\Eq) = \Omega( \log n)$.\\
+	\\
+	Second by \textbf{Newman's Theorem}, $\Rpriv_{2/3}(f) \le R(EQ) + O\left(\log \frac{n}{\epsilon^2}\right) = O(logn)$\\
+	\\
+	And since error reduction works in private-coin randomized protocol as well, we can use constant factor of run time to reduce the error probability to 1/3.\\
+	\\
+	Thus, $\Rpriv(\Eq) = \Theta( \log n)$.
+\end{proof}
+
+\exercises
+
+\begin{exercise}
+	Prove the upper bound $\Rpriv(\Eq) = O( \log n)$ directly without using Newman's theorem.
+\end{exercise}
+
+	
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+\chapter[CH05]{Information complexity}
+
+Communication complexity is concerned mostly with the \emph{minimum number of bits} that Alice and Bob need to exchange in order to compute some function on
+their joint inputs. Information complexity, on the other hand, is concerned with
+the \emph{minimum amount of information} contained in the bits that Alice and
+Bob exchange to compute that function. Our first task is to formally define this notion of information. To do so, we will use standard definitions from information theory.
+\newpage
+\begin{definition}[Entropy]
+	The \emph{entropy} of a random variable $Z$ drawn from the probability distribution $\mu$ over a finite set $\calZ$ is
+	\[
+	H(Z) = - \sum_{z \in \calZ} \mu(z) \log_2 \mu(z).
+	\]
+	The entropy of a sequence of random variables $Z_1,Z_2,\ldots,Z_k$, denoted $H(Z_1\,Z_2\cdots Z_k)$ is the entropy of the random variable $Z = (Z_1,Z_2,\ldots,Z_k)$.
+\end{definition}
+
+\begin{definition}[Conditional entropy]
+	The \emph{conditional} entropy of $Z$ given another random variable $Z'$ is
+	\[
+	H(Z \mid Z') = H(Z\,Z') - H(Z').
+	\]
+\end{definition}
+
+\begin{definition}[Mutual information]
+	The \emph{mutual information} of two random variables $Z$ and $Z'$ is
+	\[
+	I( Z ; Z' ) = H(Z) - H(Z \mid Z').
+	\]
+	The \emph{conditional mutual information} of $Z$ and $Z'$ given $W$ is
+	\[
+	I( Z ; Z' \mid W) = H(Z \mid W) - H(Z \mid Z'\, W).
+	\]
+\end{definition}
+
+We use the following basic properties of entropy and mutual information.
+
+\begin{theorem}
+	Entropy satisfies the following properties:
+	\begin{description}
+		\item[Boundedness] For every $Z$ over a finite set $\calZ$, $0 \le H(Z) \le \log_2 |\calZ|$.
+		\item[Chain rule] $H(Z_1\,Z_2\cdots Z_k) = H(Z_1) + H(Z_2 \mid Z_1) + \cdots + H(Z_k \mid Z_1\cdots Z_{k-1})$.
+		\item[Subadditivity] $H(Z \mid Z') \le H(Z)$ and $H(Z\,Z') \le H(Z) + H(Z')$.
+	\end{description}
+	Mutual information satisfies the following properties:
+	\begin{description}
+		\item[Boundedness] $0 \le I(Z ; Z') \le \min\{ H(Z), H(Z') \}$.
+		\item[Chain rule] $I(Z_1\,Z_2 ; W) = I(Z_1 ; W) + H(Z_2 ; W \mid Z_1)$.
+		\item[Data processing inequality] Whenever $Z' = f(Z)$ is determined by $Z$, $I(Z' ; W) \le I(Z ; W)$.
+	\end{description}
+	
+\end{theorem}
+
+
+
+ 
+\section{External information complexity}
+
+Throughout this chapter, we will consider randomized protocols $\Pi$ that have access to both public- and private-coin randomness. 
+
+\begin{definition}[Transcript]
+	The \emph{transcript} of a protocol $\Pi$ on some input $(x,y) \in \calX \times \calY$, which we will denote by
+	\[
+	\Gamma_{x,y}^\Pi
+	\]
+	is a bit string that includes (i) the public-coin random string $R$ used by Alice and Bob and (ii) the sequence of bits that they exchange. 
+\end{definition}
+
+The first natural notion of information of a protocol that we will study is the amount of information that an external observer learns about Alice and Bob's input $(x,y)$ by seeing the transcript $\Gamma_{x,y}^\Pi$ of their communication protocol.
+
+\begin{definition}[External information cost]
+	The \emph{external information cost} of a randomized protocol $\Pi$ over the distribution $\mu$ on $\calX \times \calY$ is
+	\[
+	\icostext_\mu(\Pi) = I\big( X\,Y ; \Gamma_{X,Y}^\Pi \big)
+	\]
+	where $(X,Y) \sim \mu$.
+\end{definition}
+
+\begin{definition}[External information complexity]
+	The \emph{$\epsilon$-error external information complexity} of the function $f : \calX \times \calY \to \{0,1\}$ with respect to the distribution $\mu$ is
+	\[
+	\ICext_{\mu,\epsilon}(f) = \inf_{\pi} \icostext_\mu(\pi)
+	\]
+	with the infimum taken over all randomized protocols that compute $f$ with error at most $\epsilon$.\footnote{Note that the error of a randomized protocol is still defined to be its maximum error probability over \emph{any} input in $\calX \times \calY$; it is \emph{not} the expected error over an input drawn from $\mu$.}
+\end{definition}
+
+The external information complexity of a function gives a lower bound on its randomized communication complexity.
+
+\begin{theorem}
+	For every function $f : \calX \times \calY \to \{0,1\}$ and every distribution $\mu$ on $\calX \times \calY$,
+	\[
+	\ICext_{\mu,\epsilon}(f) \le R_\epsilon(f).
+	\]
+\end{theorem}
+
+\begin{proof}
+	By boundedness of mutual information, $0 \le I(Z ; Z') \le \min\{ H(Z), H(Z') \}$, thus for any $\icostext_\mu(\Pi) = I\big( X\,Y ; \Gamma_{X,Y}^\Pi \big)$, we have that $\icostext_\mu(\Pi) \leq \min\{ H(X\,Y), H(\Gamma_{X,Y}^\Pi) \}$.\\
+	\\
+	Since $H(\Gamma_{X,Y}^\Pi) \leq |\Gamma_{X,Y}^\Pi|$ by boundedness of entropy, we have $\icostext_\mu(\Pi) \leq |\Gamma_{X,Y}^\Pi|$.\\
+	\\
+	And since the size of $|\Gamma_{X,Y}^\Pi|$ is the total bits exchanged by the protocol, we have that $\icostext_\mu(\Pi) \leq R_\epsilon(f)$ for any protocol $\pi$. Thus $\ICext_{\mu,\epsilon}(f) \le R_\epsilon(f)$.
+\end{proof}
+
+
+ 
+\section{Public randomness can be eliminated}
+
+When designing protocols to obtain upper bounds on the information complexity of functions, it is convenient to work in the framework where Alice and Bob can use both public- and private-coin randomness. For lower bounds, however, it is useful to note that without loss of generality we can consider protocols that use only private randomness.
+
+\begin{theorem}
+	For every function $f : \calX \times \calY \to \{0,1\}$, every distribution $\mu$ over $\calX \times \calY$, and every $0 \le \epsilon \le \frac12$,
+	\[
+	\ICext_{\mu,\epsilon}(f) = \inf_{\pi} \icostext_\mu(\pi)
+	\]
+	even when the infimum is taken only over private-coin randomized protocols that compute $f$ with error at most $\epsilon$.
+\end{theorem}
+
+\begin{proof}
+	Consider the case where only private randomness is allowed, then any private-coin protocol $\pi$ can simulate public randomness by sending the private random bits over. In other words, all private random bits produced must be included inside the transcript comparing to public coin protocols. \\
+	\\
+	However, since we assume the random bits are independent of the protocols inputs $XY$, sending the random bits won't reveal any information about either $X$ or $Y$, thus it does not increase the external information cost of the protocol.\\
+	\\
+	Since restricting to private randomness does not increase the information cost of any protocol, we still have $\ICext_{\mu,\epsilon}(f) = \inf_{\pi} \icostext_\mu(\pi)$.
+\end{proof}
+
+
+ 
+\section{Equality VIII}
+
+External information complexity can be used to give a simple proof of the $\Omega(n)$ lower bound for the $0$-error randomized communication complexity of the equality function.
+
+\begin{theorem}
+	Let $\mu$ be the uniform distribution on the set $\{(x,x) : x \in \{0,1\}^n\}$. The $0$-error information complexity of $\Eq : \{0,1\}^n \times \{0,1\}^n \to \{0,1\}$ with respect to $\mu$ is
+	\[
+	\ICext_{\mu,0}(\Eq) = n.
+	\]
+\end{theorem}
+
+\begin{proof}
+	$\ICext_{\mu,0}(\Eq) = \inf_{\pi} I\big( X\,Y ; \Gamma_{X,Y}^\Pi \big) = \inf_{\pi} H(XY) - H(XY|\Gamma_{X,Y}^\Pi \big)$\\
+	\\
+	Now note that for any different pair of $(x,x)$ and $(y,y)$, they must use distinct transcripts if the protocol $\mu$ calculates EQUALITY with $0$ error probability: \\
+	\\ 
+	Otherwise $(x,x)$ and $(y,y)$ will be on the same leave of the protocol which implies $(x,y) and (y,x)$ are on the same leave. This contradicts with $\pi$'s $0$ error probability. \\
+	\\
+	Since we have a distinct transcript for each pair of $(x,x)$, we can get the value of $XY$ from the transcript as $XY$ is uniformly distributed over ${(x,x): x \in {0,1}^n}$. In other words, $H(XY|\Gamma_{X,Y}^\Pi \big) = 0$.\\
+	\\
+	Thus $\ICext_{\mu,0}(\Eq) = \inf_{\pi} H(XY) = - \sum \mu(z)\log_2\mu(z) = - \sum \frac1{2^n}\log_2\frac1{2^n} = n$
+\end{proof}
+
+ 
+\section{And}
+
+Let $\textsc{And} : \{0,1\} \times \{0,1\} \to \{0,1\}$ be the and function $\textsc{And}(x,y) = x \wedge y$ that takes the value $1$ if and only if $x = y = 1$.
+
+\begin{theorem}
+	For every distribution $\mu$ on $\{0,1\} \times \{0,1\}$,
+	\[
+	\ICext_{\mu,0}(\textsc{And}) \le \log_2 3.
+	\]
+	Furthermore, this bound is tight when $\mu(0,1) = \mu(1,0) = \mu(1,1) = \frac13$.
+\end{theorem}
+
+\begin{proof}
+	Think of a protocol where :\\
+	\\
+	-Alice sends Bob her bit, and Bob only send his bit back only if Alice sent $1$.\\
+	-Alice and Bob calculate the result of AND respectively \\
+	\\
+	It is clear that there are only three possibilities, thus the protocol only has $3$ leaves. To represent these leaves, we will only need three different transcripts since there are also no random bits. In other words, for this protocol, $|\Gamma_{X,Y}^\Pi \big| = 3$ \\
+	\\
+	Now $\ICext_{\mu,0}(\textsc{And}) = \inf_{\pi} I\big( X\,Y ; \Gamma_{X,Y}^\Pi \big) \le H(\Gamma_{X,Y}^\Pi \big) \le log_2|\Gamma_{X,Y}^\Pi \big| = log_23$.\\
+	\\
+	Furthermore, if $\mu(0,1) = \mu(1,0) = \mu(1,1) = \frac13$, \\
+	\\
+	$\ICext_{\mu,0}(\textsc{And}) = H(XY)$ by similar from EQUALITY VII\\
+	\\
+	$= -3\cdot\frac13\log_2\frac13 = \log_23$
+\end{proof}
+
+
+ 
+\section{Internal information complexity}
+
+Another natural notion of information of a protocol is the amount of information that Alice and Bob learn about each other's inputs by running their communication protocol.
+
+\begin{definition}[Internal information cost]
+	The \emph{internal information cost} of a randomized protocol $\Pi$ over the distribution $\mu$ on $\calX \times \calY$ is
+	\[
+	\icostint_\mu(\Pi) = I\big( X ; \Gamma_{X,Y}^\Pi|Y\big) + I\big( Y ; \Gamma_{X,Y}^\Pi|X\big).
+	\]
+	where $(X,Y) \sim \mu$.
+\end{definition}
+
+\begin{definition}[Internal information complexity]
+	The \emph{$\epsilon$-error internal information complexity} of the function $f : \calX \times \calY \to \{0,1\}$ with respect to the distribution $\mu$ is
+	\[
+	\ICint_{\mu,\epsilon}(f) = \inf_{\pi} \icostint_\mu(\pi)
+	\]
+	with the infimum taken over all 0randomized protocols that compute $f$ with error at most $\epsilon$.
+\end{definition}
+
+The internal information complexity of a function gives a lower bound on its external information complexity (and therefore on its randomized communication complexity as well).
+
+\begin{theorem}
+	For every function $f : \calX \times \calY \to \{0,1\}$, every distribution $\mu$ on $\calX \times \calY$, and every $0 \le \epsilon \le \frac12$,
+	\[
+	\ICint_{\mu,\epsilon}(f) \le \ICext_{\mu,\epsilon}(f).
+	\]
+\end{theorem}
+
+\begin{proof}
+	Let $\Pi$ be a protocol that computes $f$ with error $\leq \epsilon$ and $\Gamma_{X,Y}^\Pi = (M_1M_2...M_k,R)$ without loss of generality.\\
+	 \\
+	$\ICint_{\mu,\epsilon}(f) = I(X;\Gamma_{X,Y}^\Pi|Y)+I(Y;\Gamma_{X,Y}^\Pi|X)$\\
+	$=I(X;M_1M_2...M_kR|Y)+I(Y;M_1M_2...M_kR|Y)$\\
+	$=I(X;M_1M_2...M_k|YR)+I(Y;M_1M_2...M_k|YR)$\\ 
+	 \\
+	$I(X;M_1M_2...M_k|YR)=\sum_i I(X;M_i|M_1M_2...M_{i-1}RY)$\\
+	$=\sum_{i,sent by Alice} I(X;M_i|M_1M_2...M_{i-1}RY)+\sum_{i,sent by Bob} I(X;M_i|M_1M_2...M_{i-1}RY)$\\
+	$=\sum_{i,sent by Alice} I(X;M_i|M_1M_2...M_{i-1}RY)+0$\\
+	$\leq \sum_{i,sent by Alice} I(XY;M_i|M_1M_2...M_{i-1}R)$\\
+	 \\
+	Similarly, \\
+	$I(Y;M_1M_2...M_k|XR) \leq \sum_{i,sent by Bob} I(XY;M_i|M_1M_2...M_{i-1}R)$\\
+	 \\
+	Thus $\ICint_{\mu,\epsilon}(f) \leq \sum_i I(XY;M_i|M_1M_2...M_{i-1}R) = I(XY;M_1M_2...M_kR) = I(XY;\Gamma_{X,Y}^\Pi) = \ICext_{\mu,\epsilon}(f)$
+\end{proof}
+
+
+ 
+\section{Equality VIII}
+
+The internal information complexity of a function can be much smaller than its external information complexity, as the following example shows.
+
+\begin{theorem}
+	For every distribution $\mu$ over $\{0,1\}^n \times \{0,1\}^n$, the $0$-error information complexity of $\Eq : \{0,1\}^n \times \{0,1\}^n \to \{0,1\}$ is 
+	\[
+	\ICint_{\mu,0}(\Eq) = O(1).
+	\]
+\end{theorem}
+
+\begin{proof}
+	Consider the following protocol:\\
+	\\
+	-Alice and Bob chose $n$ linearly independent vectors $r_1,\ldots,r_n \in \{0,1\}^n$ publicly.\\
+	-Alice send Bob a bit which is the inner product of $r_i$ and $X$.\\
+	-Bob calculates the inner product of $r_i$ and $Y$, compare the bit and return the result to Alice.\\
+	-If Bob sent 0, both Alice and Bob terminate. Otherwise Alice sends next inner product. If all $n$ inner products were sent, Alice and Bob return 1.\\
+	\\
+	Since all $n$ vectors are linearly independent, they form a basis and this gives us $0$ error probability.\\
+	\\
+	Now we calculate the internal information complexity by two cases:\\
+	\\
+	1. if $X=Y$, then both $I\big( X ; \Gamma_{X,Y}^\Pi|Y\big)$ and $I\big( Y ; \Gamma_{X,Y}^\Pi|X\big)$ gives a value of 0 since $X$ and $Y$ decides each other if we know $X=Y$
+	2. if $X \neq Y$, then it is unlikely that Alice and Bob exchange too many bits: \\
+	\\
+	Since $X \neq Y$, for at least one $r_i$ we'll have different inner products. \\
+	\\
+	The probability of going into $i$th round is $\frac{2^{n-i+1}-1}{2^n-1}\leq2^{-i+1}$. So the expected number of rounds will be  less than $\sum_{i=1}^{n}2^{-i+1}=O(1)$. And since we exchange 2 bits each round, the exchanged bits are at most $O(1)$. So $\ICint_{\mu,0}(\Eq) = O(1)$.
+\end{proof}
+
+\bigskip
+\noindent \emph{Hint.} Consider a protocol where Alice and Bob use their public randomness to select $n$ linearly independent vectors $r_1,\ldots,r_n \in \{0,1\}^n$.
+
+
+ 
+\section{Direct sum}
+
+Given a function $f : \calX \times \calY \to \{0,1\}$, define $f^k : \calX^k \times \calY^k \to \{0,1\}^n$ to be the function where
+\[
+f^n(x^{(1)},\ldots,x^{(k)},y^{(1)},\ldots,y^{(k)}) = \big( f(x^{(1)},y^{(1)}), \ldots f(x^{(k)}, y^{(k)})\big).
+\]
+This corresponds to the setting where Alice and Bob must compute the value of $f$ on $n$ different pairs of inputs instead of just $1$.
+
+It might seem obvious that the complexity of computing $f^k$ is always $k$ times the complexity of computing $f$, but this is false in general! One counter-example is given by the equality function. Since $R_\epsilon(\Eq) = O(\log \frac1\epsilon)$, we have that $R_{2^{-\sqrt{k}}}(\Eq) = \sqrt{k}$ and so we might expect that $R_{2^{-\sqrt{k}}}(\Eq^k) = k^{3/2}$. In fact, the true randomized complexity of this function is much smaller.
+
+\begin{theorem}
+	$R_{2^{-\sqrt{k}}}(\Eq^k) = O(k)$.
+\end{theorem}
+
+\begin{proof}
+	\replacethistext{Enter your proof here, if you complete it.}
+\end{proof}
+
+
+ 
+\section{Direct sum for information complexity}
+
+One of the main advantages of working with internal information complexity is that in this setting every function \emph{does} satisfy the intuition that computing $k$ copies of a function is exactly $k$ times harder than computing a single copy of it.
+\begin{theorem}
+	For every function $f : \calX \times \calY \to \{0,1\}$ and every $k \ge 1$,
+	\[
+	\ICint_{\mu,0}(f^k) = k \cdot \ICint_{\mu,0}(f).
+	\]
+\end{theorem}
+
+\begin{proof}
+Prove inequalities in both directions:\\
+ \\
+($\leq$) Simply repeat the function $f$ for $k$ times.\\
+ \\
+($\ge$) Say we have a protocol $\Pi$ for $f^k$, we need to design a protocol $\Pi$' for $f$.\\
+ \\
+$Pub:\ X_1...X_{i-1}, Y_{i+1}...Y_k$\\
+$Priv:\ X_{i+1}...X_k, Y_1...Y_{i-1}$\\
+ \\
+$I(Y;\Gamma^{\Pi'}|X) \leq I(Y_i;\Gamma^{\Pi}_{X_{i+1}...X_k}|i,X_{[i-1]},X,Y_{i+1},...,Y_k)$\\
+$=I(Y_i;\Gamma^{\Pi}|i,X_{[k]},Y_{i+1},...,Y_k)$\\
+$=\frac1k\sum_{j=1}^{k}I(Y_i;\Gamma^{\Pi}|[i=j],X_{[k]},Y_{i+1},...,Y_k)$\\
+$=\frac1k\sum_{j=1}^{k}I(Y_j;\Gamma^{\Pi}|X_{[k]},Y_{j+1},...,Y_k)$\\
+$=\frac1kI(Y;\Gamma^{\Pi}|X)$\\
+$=\frac1k\ICint_{\mu,0}(f^k)$\\
+\end{proof}
+
+
+ 
+\section{Set disjointness III}
+
+It is possible to obtain tight bounds on the internal information complexity of the \textsc{And} function. These tight bounds have been used to obtain \emph{exact} bounds on the communication complexity of the set disjointness function. To establish the tight asymptotic bound on its randomized communication complexity, however, all we need is the following result.
+
+\begin{lemma}
+	Let $\mu$ be the distribution on $\{0,1\} \times \{0,1\}$ defined by $\mu(0,0) = \mu(0,1) = \mu(1,0) = \frac13$.
+	For every $\epsilon > 0$, there is a constant $c_\epsilon > 0$ for which
+	\[
+	\ICint_{\mu,\epsilon}(\textsc{And}) = c_\epsilon.
+	\]
+\end{lemma}
+
+This result and (extensions of) the direct sum property of internal information complexity can be used to bound the randomized communication complexity of the set disjointness function.
+
+\begin{theorem}
+	For every (small enough) $\epsilon \ge 0$, 
+	\[
+	\R_\epsilon(\Disj) = \Omega(n).
+	\]
+\end{theorem}
+
+\begin{proof}
+Solve the DISJ problem using previous theorem:\\
+ \\
+Say we have a protocol $\Pi$ that solves DISJ, then we can solve AND problem with it as well since DISJ can be reduced to $n$ copies of AND problem.\\
+ \\
+First say we have $i$ selected from $[n]$ uniformly at random, and $x_1\dots x_{i-1}$, $y_{i+1}\dots y_k$ selected from $\mu$.\\
+ \\
+$\ICint(\textsc{And}) = \ICint(\Disj)/n = c_\epsilon$\\
+$\ICint(\Disj) = nc_\epsilon$\\ 
+Then $R_\epsilon(\Disj) \ge \ICint(\Disj) = \Omega(n)$
+\end{proof}
+
+	
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\chapter[CH06]{ One-way communication and simultaneous message passing}
+
+
+Every communication complexity question we have studied so far in this course have been set in the model where there are two players, Alice and Bob, who exchange bits with each other to compute functions on their joint inputs. This is of course not the only model of communication that is of interest---other models where we change the number of parties or restrict how messages can be sent between them have also been studied extensively. In this chapter, we examine the communication complexity of functions when the communication between Alice and Bob is restricted.
+
+\newpage
+
+ 
+\section{One-way communication complexity}
+
+The first modification to the standard communication complexity setting that we will consider is the \emph{one-way communication} model, where the only communication taking place during a protocol is from Alice to Bob; then Bob outputs the value of the function.
+
+\begin{definition}[One-way protocol]
+	A communication protocol $\pi$ is a \emph{one-way protocol} if all the internal nodes except the ones right above the leaves in the rooted binary tree $T(\pi)$ are labelled with $A$.
+\end{definition}
+
+As in the standard two-way communication setting, we can consider deterministic, public-coin, and private-coin protocols.
+
+\begin{definition}[One-way communication complexity]
+	The deterministic and (public-coin) randomized \emph{one-way communication complexities} of a function $f : \calX \times \calY \to \{0,1\}$, denoted
+	\[
+	D^{\rightarrow}(f) \qquad \mbox{and} \qquad R^{\rightarrow}(f)
+	\]
+	respectively, are the minimum cost of a deterministic one-way protocol that computes $f$ and of a public-coin randomized one-way protocol that computes $f$ with error at most $\frac13$, respectively.
+\end{definition}
+
+\begin{remark}
+	We can also define one-way analogues of the other models of communication such as distributional complexity, private-coin randomized complexity, etc.
+\end{remark}
+
+The communication complexity of some functions remains identical in the one-way and two-way settings.
+
+\begin{theorem}
+	The one-way communication complexity of $\Eq : \{0,1\}^n \times \{0,1\}^n \to \{0,1\}$ satisfies
+	\[
+	D^\rightarrow(\Eq) = D(\Eq) = \Theta(n) \qquad \mbox{and} \qquad 
+	R^\rightarrow(\Eq) = R(\Eq) = \Theta(1).
+	\]
+\end{theorem}
+
+\begin{proof}
+	i$)$Since the lower bound of two-way communication protocol is lower than or equals to the lower bound of one-way communication protocol, we have $D^\rightarrow(\Eq) \ge (\Eq)$, $D^\rightarrow(\Eq) = \Omega(n)$.\\
+	\\
+	Now consider the deterministic protocol where Alice sends Bob the whole message and Bob returns the result of $EQ(x,y)$. The communication cost of this protocol is $n+1$, thus $D^\rightarrow(\Eq) = O(n)$, which gives $D^\rightarrow(\Eq) = \Theta(n)$.\\
+	\\
+	ii$)$ First note that the public-coin randomized EQ protocol that uses 3 bits of communication with error probability 1/4 is a one-way communication protocol. Thus the upper bound of $R^\rightarrow(\Eq)$ is still O(1). Thus $R^\rightarrow(\Eq)= \Theta(1) = R(\Eq) $.
+\end{proof}
+
+
+ 
+\section{Index function}
+
+In general, however, the one-way and two-way complexity of a function can differ greatly. A simple example that highlights this difference is the \emph{index function} $\Index : \{0,1\}^n \times [n] \to \{0,1\}$ defined by
+\[
+\Index(x,i) = x_i.
+\]
+
+\begin{theorem}
+	The communication complexity of the $\Index : \{0,1\}^n \times [n] \to \{0,1\}$ function satisfies
+	\[
+	D(\Index) = O(\log n) \qquad \mbox{and} \qquad D^\rightarrow(\Index) = \Omega(n).
+	\]
+\end{theorem}
+
+\begin{proof}
+	Think of a deterministic protocol where Bob sends the index $i$ in binary to Alice and Alice returns the $i$th entry to Bob which is a single bit. This gives a upper bound of $O(logn)$ to $D(\Index)$.\\
+	\\
+	For one-way lower bound, note that if $D^\rightarrow(\Index) \leq n$, there exists some $x \neq x'$ in the same node of the protocol tree. \\
+	 \\
+	In other words, $f(x)=f(x') for some x\neq x'$. Then $INDEX(x,i)=INDEX(x',i)$ but this is a contradiction. So we have that $D^\rightarrow(\Index) = \Omega(n)$.\\
+\end{proof}
+
+
+
+ 
+\section{One-way vs.~two-way communication complexity}
+
+The gap between the one-way and two-way communication complexity of the index function is the largest possible.
+
+\begin{theorem}
+	For every function $f : \calX \times \calY \to \{0,1\}$,
+	\[
+	D^\rightarrow(f) \le 2^{D(f)}+1.
+	\]
+\end{theorem}
+
+\begin{proof}
+	Assume there is a two-way deterministic communication protocol that computes $f$ with cost $D(f)$. \\
+	\\
+	Now we try to simulate this protocol with an one-way communication protocol: \\
+	\\
+	Whenever Alice is waiting for a bit from Bob, she will respond to both cases where Bob sent 0 or 1. Since in original protocol Bob sent Alice at most n bits, now Alice will respond with at most $2^n$ bits. Plus the bit that Bob may return, we will have that $D^\rightarrow(f) \le 2^{D(f)}+1$.
+\end{proof}
+
+
+
+ 
+\section{Index II}
+
+We can strengthen our lower bound on the one-way communication complexity of the index function to show that it holds in the public-coin randomness model as well.
+
+\begin{theorem}
+	The one-way randomized communication complexity of the $\Index : \{0,1\}^n \times [n] \to \{0,1\}$ function is
+	\[
+	R^\rightarrow(\Index) = \Omega(n).
+	\]
+\end{theorem}
+
+\begin{proof}
+	(Method1: Combintorics)\\ 
+	Consider any one-way randomized communication protocol $\pi$ that computes INDEX as following:\\
+	\\
+	Alice sends out some bits, say $a$, that depends on her own private randomness and $x$, to Bob. Then Bob returns either 0 or 1 according to the received value and $i$. However, since random protocols are just distribution of deterministic protocols, we can just prove the lower bound for every deterministic version of $\pi$, in other words, for any fixed randomness.\\
+	\\
+	Now think Alice's action as a function $A$ acts on $x$ and Bob returns either 0 or 1 according to the value of $A(x)$ and $i$, we can assume Bob can interpret A(x) as a vector and simply returns the $i$th entry.\\
+	\\
+	This yields the error probability as the hamming distance between $x$ and $A(x)$ over $n$, $\frac{HD(x,A(x))}{n}$, for fixed $x$ and Alice's private randomness. \\
+	\\
+	Now to prove a lower bound of $O(n)$, assume $A(x)$ has size $cn$ for some constant $c$. Now only consider Alice's input with error probability $\leq \frac14$, by using Stirling's approximation on the expression $1 + {n \choose 1} + {n \choose 1} + ... + {n \choose \frac{n}{4}}$ which is for the inputs with error probability $\ge \frac14$, we conclude that more than $\frac12$ of the inputs are with error probability larger than $\frac14$. This gives a lower bound for total error probability of $\frac18$, and the lower bound on error probability with $cn$ bits of communication also gives the lower bound $\Omega(n)$ for INDEX. \\
+	 \\
+	(Method2: Information Cost)\\
+	$|M|\ge H(M) \ge I(X;M) = \sum^n_{i=1} I(X_i;M|X_1,...,X_{i-1})$\\
+	$=\sum^n_{i=1} [H(X_i|X1,...,X_{i-1})-H(X_i|M_1X_1,...,X_{i-1})]$
+	$=\sum^n_{i=1} [1-H(X_i|M_1X_1,...,X_{i-1})]$\\
+	$=n-\sum^n_{i=1} H(X_i|M_1X_1,...,X_{i-1})$\\
+	$\ge n-\sum_{i=1}^{n}H(X_i|M)$\\
+	 \\
+	$H(X_i|M)=\sum_{m\in M} H(X_i|M=m)Pr(M=m)$\\
+	$= \sum_{m\in M} (\frac23log(\frac32)+\frac13 log3)Pr(M=m)$\\
+	$\leq \frac23$\\
+	 \\
+	Thus we have $R^\rightarrow(\Index) = \Omega(n)$.\\
+	 \\
+	\textbf{Extra Reading:} Fano's Inequality \\
+\end{proof}
+
+
+
+ 
+\section{Disjointness}
+
+The lower bound on the index function can be used to obtain a simple proof of the $\Omega(n)$ lower bound on the one-way randomized communication complexity of the disjointness function.
+
+\begin{theorem}
+	The one-way randomized communication complexity of the $\Disj : \{0,1\}^n \times \{0,1\}^n \to \{0,1\}$ function is
+	\[
+	R^\rightarrow(\Disj) = \Omega(n).
+	\]
+\end{theorem}
+
+\begin{proof}
+	First, by way of contradiction, assume that we can solve DISJOINTNESS with less than $cn$ bits for constant $c$ and large enough $n$. Then think of the following special case: \\
+	\\
+	Value of $y$ from Bob is a binary string with exactly one 1 on $i$th index and $n-1$ 0's on other indices. Then $DISJ(x,y) = 0$ if the $i$th index of Alice's input is 1 as well and 0 otherwise. In other words, Bob just outputs the $i$th bit of $x$, which is an equivalent of INDEX function. \\
+	\\
+	Since now we will be able to compute INDEX with less bits than its lower bound, by contradiction, $R^\rightarrow(\Disj) = \Omega(n)$.
+\end{proof}
+
+\begin{remark}
+	Your proof should \emph{not} use our previous lower bounds on the two-way randomized communication complexity of the disjointness function; instead, you should be able to use the lower bound on the one-way communication complexity of the index function to get this result.
+\end{remark}
+
+
+
+ 
+\section{Gap Hamming}
+
+Define the \emph{Hamming distance} between strings $x,y \in \{0,1\}^n$ to be $\dHam(x,y) = |\{i \in [n] : x_i \neq y_i\}|$.
+The \emph{gap Hamming function} $\GHD : \{0,1\}^n \times \{0,1\}^n \to \{0,1,*\}$ is the partial function defined by
+\[
+\GHD(x,y) = \begin{cases}
+1 & \mbox{if } \dHam(x,y) = \frac n2 \\
+0 & \mbox{if } |\dHam(x,y) - \frac n2| \ge \sqrt{n} \\
+* & \mbox{otherwise.}
+\end{cases}
+\] 
+(We assume throughout this section that $n$ is even.)
+
+\begin{definition}
+	A randomized protocol \emph{computes} the partial function $f : \calX \times \calY \to \{0,1,*\}$ with error at most $\epsilon$ if for every input $(x,y) \in f^{-1}(0) \cup f^{-1}(1)$, it outputs the value $f(x,y)$ with probability at least $1-\epsilon$.\footnote{For the inputs in $f^{-1}(*)$, the protocol is free to output anything.}
+\end{definition}
+
+\begin{theorem}
+	The one-way randomized communication complexity of the $\GHD : \{0,1\}^n \times \{0,1\}^n \to \{0,1\}$ function is
+	\[
+	R^\rightarrow(\GHD) = \Omega(n).
+	\]
+\end{theorem}
+
+\begin{proof}
+	Idea: Use public randomness to reduce: note that running GHD on Alice and Bob assume the public randomness is Alice's input, then if GHP = 0/1 the values from Alice and Bob are negative/positive correlation.\\
+	 \\
+	$Pr[a_i=b_i] =Pr[||x_{-i}-r_{-i}||=\frac{n-1}{2}]\cdot Pr[a_1=b_1| ||x_{-i}-r_{-i}||=\frac{n-1}{2}]+$\\
+	$Pr[||x_{-i}-r_{-i}||\neq\frac{n-1}{2}]\cdot Pr[a_1=b_1| ||x_{-i}-r_{-i}||\neq\frac{n-1}{2}]$ \\
+	$-=O(\frac{1}{\sqrt{n}})\cdot 1+(1-O(\frac{1}{\sqrt{n}}))\cdot \frac12$ if $x_i=1$\\
+	$-=O(\frac{1}{\sqrt{n}})\cdot 0+(1-O(\frac{1}{\sqrt{n}}))\cdot \frac12$ if $x_i=0$\\
+	 \\
+	Thus $Pr[a_i=b_i]=\frac12+\frac{1}{\sqrt{n}}$ if $x=1$\\
+	$Pr[a_i=b_i]=\frac12-\frac{1}{\sqrt{n}}$ if $x=0$\\ 
+	\\
+	And Alice, Bob are positively/negatively correlated.\\
+	
+\end{proof}
+
+
+ 
+\section{Simultaneous message passing}
+
+In the \emph{simultaneous message passing (SMP)} model of communication, Alice and Bob both send messages to a third party that we will call the Referee, without seeing each other's transmissions. (We picture both Alice and Bob sending their communications to the referee simultaneously.) Note that the Referee does not see either Alice or Bob's inputs, and must then output the result of the protocol using only the messages received from both parties. In the private-coin model of SMP communication, Alice and Bob each have a private source of randomness that is not visible to any other party.
+
+\begin{definition}
+	The \emph{SMP (private randomness) complexity} with error $\epsilon$ of a function $f : \calX \times \calY \to \{0,1\}$, denoted
+	\[
+	R^{\parallel,\mathrm{priv}}_\epsilon(f),
+	\] 
+	is the minimum (worst-case) communication cost of any private-coin SMP protocol that computes $f$ with error at most $\epsilon$ on any input $(x,y) \in \calX \times \calY$.
+\end{definition}
+
+As usual, we write $R^{\parallel,\mathrm{priv}}(f) = R^{\parallel,\mathrm{priv}}_{1/3}(f)$.
+
+\begin{theorem}
+	The SMP complexity of every function $f : \calX \times \calY \to \{0,1\}$ satisfies
+	\[
+	R^{\parallel,\mathrm{priv}}(f) = \Omega(\sqrt{D(f)}).
+	\]
+\end{theorem}
+
+\begin{proof}
+Idea: Consider the success probability of a protocol in which Alice and Bob send $t$ messages to the referee instead of $1$, when all $t$ messages are sent for the same input but with independent randomness.\\
+ \\
+Let $\Pi$ be an SMP protocol with cost $c$, let $M_x$,$V_y$ be the distance on messages by Alice and Bob on input $x$ and $y$.\\
+ \\
+Then $Pr_{m_A\sim M_x,m_B\sim V_y}[R(m_A,m_B)=f(x,y)]\ge\frac23$.\\
+ \\
+\textbf{Claim}: There exists $T_x=$ set of $O(c)$ messages that Alice sends such that for all $m_B$ from Bob,\\
+ \\
+$|Pr_{m_A\sim T_x}[R(m_A,m_B)=1]-Pr_{m_A\sim M_x}[R(m_A,m_B)=1]| \leq \frac1{100}$\\
+ \\
+Note this can be proven with Chernoff Bound and Union Bound.\\
+
+A similar Claim will be that  there exists $T_y=$ set of $O(c)$ messages that Bob sends such that for all $m_A$ from Alice,\\
+\\
+$|Pr_{m_B\sim T_y}[R(m_A,m_B)=1]-Pr_{m_B\sim V_y}[R(m_A,m_B)=1]| \leq \frac1{100}$\\
+\\
+Combining both results will give $D(f)\leq O(R^{\parallel,priv}(f)^2)$\\
+ \\
+And thus $R^{\parallel,\mathrm{priv}}(f) = \Omega(\sqrt{D(f)})$.
+\end{proof}
+
+
+ 
+\section{Equality X}
+
+\begin{theorem}
+	The SMP complexity of the equality function $\Eq : \{0,1\}^n \times \{0,1\}^n \to \{0,1\}$ is
+	\[
+	R^{\parallel,\mathrm{priv}}(\Eq) = \Theta(\sqrt{n}).
+	\]
+\end{theorem}
+
+\begin{proof}
+By Theorem 7 and the fact that $D(EQ) = O(n)$, we have the lower bound $R^{\parallel,\mathrm{priv}}(\Eq) = \Omega(\sqrt{n})$.\\
+	 \\
+\textbf{Note}: By using (basic but still remarkable) results from error-correcting codes, it is sufficient to design a randomized protocol that computes the partial function $\Eq^* : \{0,1\}^n \times \{0,1\}^n \to \{0,1,*\}$ defined by
+\[
+\Eq^*(x,y) = \begin{cases}
+1 & \mbox{if } x = y \\
+0 & \mbox{if } \dHam(x,y) = \frac n2 \\
+* & \mbox{otherwise}
+\end{cases}
+\]
+with error at most $\frac13$.
+
+\end{proof}
+	
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\chapter[CH07]{Multiparty communication}
+
+	
+	In this chapter, we move beyond the two-party setting of communication complexity and consider the communication complexity of functions that need to be computed by 3 or more parties.
+	
+	There are two broad classes of models for multiparty communication complexity. In both of them, the input to the function is divided among the $k$ parties. In the \emph{number in hand} model, each party sees their own input and none of the other players' inputs. This model is a natural extension of our two-party communication model, and it is apparent that it only gets harder when there are more players involved. As a result, all the lower bounds that we have established in previous chapters apply to (natural variants of the functions we have seen for) this setting as well.
+	
+	In the \emph{number on the forehead} model, by contrast, every player sees \emph{all} the inputs except their own. In this model, adding new players now make the function easier to compute, not harder. The lower bounds we have developed no longer apply, and we need to develop new tools to understand which functions remain hard to compute in this setting.
+	
+	\newpage
+	 
+	\section{Number-on-the-forehead model}
+	
+	In the \emph{$k$-party number on the forehead} (NOF) model of communication complexity, $k$ players $P_1,\ldots,P_k$ aim to compute a function $f : \calX^k \to \calY$ for some finite sets $\calX$ and $\calY$. On input $x_1,\ldots,x_k$, each player $P_i$ sees \emph{all} the inputs \emph{except} $x_i$. A \emph{protocol} determines which player sends the next bit of communication; the bit sent by player $P_i$ depends on the inputs $x_1,\ldots,x_{i-1},x_{i+1},\ldots,x_k$ as well as the preivous messages. All messages communicated by a player are seen by \emph{all} other players. This is known as the \emph{blackboard} setting of communication.
+	
+	The \emph{cost} of a protocol is the maximum number of bits communicated before the protocol halts, where the maximum is taken over all possible inputs. A protocol \emph{computes} the function $f$ if all the players know $f(x)$ at the end of the protocol. As in the two-player setting, we can represent a protocol as a tree and define the function that it computes as the one determined by the value at each leaf.
+	
+	The \emph{deterministic communication complexity} of a function $f : \calX^k \to \calY$, which will again be denoted by $D(f)$, is the minimum cost of a $k$-party number-on-the-forehead communication protocol that computes $f$ in the blackboard model.
+	
+	\begin{theorem}
+		Almost all functions $f : (\{0,1\}^{n})^k \to \{0,1\}$ have communication complexity $D(f) = \Omega(n)$.
+	\end{theorem}
+	
+	\begin{proof}
+		Consider a function that requires all $n\cdot k$ input bits to correctly compute the function. Then for any player to be able to compute this function, he must have all the bits in its input.\\
+		\\
+		For such functions, since a player can see all other $n\cdot (k-1)$ bits, all he requires is any other player to send his own $n$ bits. Then after computation, this player can return the result by simply sending $0$ or $1$.\\
+		\\
+		This requires at least $n+1$ bits, thus for functions that requires all $n\cdot k$ bits to be correctly computed, its protocols need communication of at least $n+1$ bits, hence we have a lower bound of $\Omega(n)$ on $D(f)$.\\
+		 \\
+		(Formula) Note  we can count the number of functions with cost $c$ protocol which is\\
+		 $\leq2^{2c}\cdot 2^{2^{n(k-1)}\cdot 2^c}\cdot k^{2c}$, and we can get the same result as above.\\
+	\end{proof}
+	
+	\exercises
+	
+	\begin{exercise}
+		Show that every function $f : (\{0,1\}^{n})^k \to \{0,1\}$ has multiparty communication complexity $D(f) \le n+1$.
+	\end{exercise}
+	
+	\begin{open}
+		Identify any explicit function $f : (\{0,1\}^{n})^k \to \{0,1\}$ with $k \ge \log n$ that has communication complexity $\omega(1)$.
+	\end{open}
+	
+	
+	 
+	\section{Equality XI}
+	
+	Some functions can be much easier in the multiparty communication complexity model. Consider for instance the extension of the equality function for $k$ players $\Eq_k : (\{0,1\}^n)^k \to \{0,1\}$ defined by
+	\[
+	\Eq^k(x_1,\ldots,x_k) = \begin{cases}
+	1 & \mbox{if } x_1 = x_2 = \cdots = x_k \\
+	0 & \mbox{otherwise.}
+	\end{cases}
+	\]
+	\begin{theorem}
+		For any $k \ge 3$, $D(\Eq^k) \le 2$.
+	\end{theorem}
+	
+	\begin{proof}
+		Consider following multi-party communication protocol:\\
+		\\
+		-Select first and second player, player $1$ and player $2$\\
+		-Player $1$ computes the result of $EQ^{k-1}(x_2,x_3,...,x_k)$\\
+		-Player $1$ sends the result bit, say $r$, to the blackboard\\
+		-Player $2$ computes the result of $EQ^{k-1}(x_1,x_3,...,x_k)$\\
+		-Say the result bit is $t$, player $j$ then sends $AND(s,t)$ as the output of the protocol.\\
+		\\
+		This protocol correctly computes $\Eq^k(x_1,\ldots,x_k)$ as it first checks if $(x_2,...,x_k)$ are all equal, then checks if $(x_1,x_3,...,x_k)$ are all equal. If they both are, then all of $x_i$'s for $1 \leq i \leq k$ are equal, and if at least one of them are not all equal, it implies otherwise. \\
+		\\
+		As this protocol correctly computes $\Eq^k(x_1,\ldots,x_k)$ and takes $2$ bits of communication for any input, we have  $D(\Eq^k) \le 2$. 
+	\end{proof}
+	
+	
+	
+	 
+	\section{Majority Inner Product}
+	
+	Other functions also have very efficient protocols in the multiparty communication complexity setting. 
+	
+	For three bits $a,b,c$, define the \emph{majority} function $\Maj : \{0,1\}^3 \to \{0,1\}$ to be $\Maj(a,b,c) = 1$ if $a+b+c \ge 2$ and $0$ otherwise. The \emph{Majority inner product} function $\MIP : (\{0,1\}^n)^3 \to \{0,1\}$ is defined by
+	\[
+	\MIP(x,y,z) = \bigoplus_{i \in [n]} \Maj(x_i,y_i,z_i).
+	\]
+	\begin{theorem}
+		$D(\MIP) \le 3$.
+	\end{theorem}
+	
+	\begin{proof}
+		Consider following multi-party communication protocol:\\
+		\\
+		-Player $x$ first looks at the input of player $y$ and player $z$\\
+		-Player $x$ calculates $\bigoplus_{i \in [n]} Z(y_i,z_i)$ where $Z(y_i,z_i) = 1$ iff $y_i = z_i = 1$\\
+		-Player $x$ sends this result to blackboard, say the result is $r_x$ \\
+		\\
+		-Similarly, Player $y$ looks at the input of player $x$ and player $z$\\
+		-Player $y$ calculates $\bigoplus_{i \in [n]} Z(x_i,z_i)$ where $Z(x_i,z_i) = 1$ iff $x_i = z_i = 1$\\
+		-Player $y$ sends this result to blackboard, say the result is $r_y$ \\
+		\\
+		-Player $z$ looks at the input of player $x$ and player $y$\\
+		-Player $z$ calculates $\bigoplus_{i \in [n]} Z(x_i,y_i)$ where $Z(x_i,y_i) = 1$ iff $x_i = y_i = 1$\\
+		-Say result is $r_z$, players $z$ then sends $r_x \oplus r_y \oplus r_z$ as the protocol's output \\
+		\\
+		This protocol correctly computes $\MIP(x,y,z)$ by following observation:\\
+		\\
+		-If at $i$-th position, $x$,$y$ and $z$ all have one, then this position will increase the value $r_x \oplus r_y \oplus r_z$ by $3$, which equals to $1$ in binary.\\
+		-If at $i$-th position, two of $x$,$y$ and $z$ all have one,  then this position will also increase the value $r_x \oplus r_y \oplus r_z$ by $1$.\\
+		-Otherwise, this position does not increase the value $r_x \oplus r_y \oplus r_z$.\\
+		\\
+		This equals the result of $\MIP(x,y,z)$. \\
+		As this protocol correctly computes $\MIP(x,y,z)$ and takes $3$ bits of communication for any input, we have  $D(\MIP) \le 3$. 
+	\end{proof}
+	
+	
+	 
+	\section{Generalized Inner Product}
+	
+	Other functions become easier, but non-trivial, when the number of players is greater than 2 but less than $\log n$.
+	
+	The \emph{generalized inner product} function $\GIP^k : (\{0,1\}^n)^k \to \{0,1\}$ is defined by
+	\[
+	\GIP^k(x^{(1)},\ldots,x^{(k)}) = \bigoplus_{i \in [n]} x^{(1)}_i \wedge x^{(2)}_i \wedge \cdots \wedge x^{(k)}_i.
+	\]
+	When we view the input to the function as a $k \times n$ matrix, the function takes the value $1$ if and only if the number of all-one columns of this matrix is odd. 
+	
+	\begin{theorem}
+		$D(\GIP^k) = O(\frac{nk}{2^k})$.
+	\end{theorem}
+	
+	\begin{proof}
+		Consider the following protocol:\\
+		\\
+		First we divide the $n$ bits into blocks with size $2^{k-1}-1$, where the last block may have size $
+		\leq 2^{k-1}-1$\\
+		\\
+		Then any player, say player $1$, will be able to decide at least one column with size $k$ that does not exist in each block.
+		This is because there are $2^{k-1}$ combinations for last $k-1$ bits, so player $1$ can simply choose the column with size $k-1$ that a block doesn't have, then fill either $0$ or $1$ at the beginning.\\
+		\\
+		Player $1$ sends all determined vectors to all other players. Then for each block, let the vector that doesn't exist in this block be $v$. We rearrange the order of bits each player holds and bits in $v$ by the same permutation in each block, so that $v$ is in the format $(0,0,0,...,0,1,1,1,...,1,1)$ where the first $1$ is at the $l$-th position.\\
+		\\
+		On the resulted $\leq 2^{k-1}-1$ vectors, we do the following:\\
+		For $1 \leq i \leq l$\\
+		\\
+		\hspace*{10mm}Player $i$(index after permutation) computes the parity of number of columns in this block with following format:\\
+		\hspace*{20mm}$(0,0,0,....,0,*,1,1,...,1)$ where the $*$ occurs at the $i$-th position.\\
+		\hspace*{10mm}Then player $i$ sends this result to all other players.\\
+		End\\
+		\\
+		Then all players can sum over the results sent by each player and all get the result of $\GIP^k(x^{(1)},\ldots,x^{(k)})$.\\
+		\\
+		Proof of correctness: \\
+		Let $p_i$ be the parity of the vector $(0,0,0,...,0,1,1,...,1,1)$ where the first $1$ is at $i$-th position. Then at each round, the parity of $(0,0,0,....,0,*,1,1,...,1)$ for player $i$ we calculated is actually $p_i + p_{i+1}$. And if we sum this over, we will get the value of $p_1 + p_l$.\\
+		However, by our setting, we know that the vector $v$ does not exist in the current block, thus the value of $p_l = 0$, and the value we get is actually $p_1$, which is the parity of all-1 columns in current block. Then we get the answer if all players sum all results up.\\
+		\\
+		Run time:\\
+		Sends all $v$ vectors: $\frac{n}{2^{k-1}-1} \cdot k$ ($\#$ of blocks $\cdot$ length)\\
+		Result of each player: $\frac{n}{2^{k-1}-1} \cdot l \leq \frac{n}{2^{k-1}-1} \cdot k$ ($\#$ of blocks $\cdot$ iterations)\\
+		Thus $D(\GIP^k) = O(\frac{nk}{2^k})$.\\
+		Reference: The BNS Lower Bound for Multi\-Party Protocols is Nearly Optimal, V.Grolmusz
+	\end{proof}
+	
+	
+	
+	 
+	\section{Cylinder intersections}
+	
+	Rectangles have a natural generalization in the number-on-the-forehead model in the form of \emph{cylinder intersections}.
+	
+	\begin{definition}
+		A \emph{cylinder} in $\calX^k$ \emph{in the $i$th direction} is a set $S \subseteq \calX^k$ such that whether an element $(x^{(1)},\ldots,x^{(k)}) \in S$ or not is independent of the value of $x^{(i)}$.
+	\end{definition}
+	
+	\begin{definition}
+		The set $S \subseteq \calX^k$ is a \emph{cylinder intersection} if $S = \cap_{i \in [k]} S_i$ where each $S_i$ is a cylinder in the $i$th direction.
+	\end{definition}
+	
+	Cylinder intersections can be used to bound the multiparty communication complexity of functions via the following fundamental lemma.
+	
+	\begin{lemma}
+		Every multiparty protocol that computes $f$ and has cost $c$ partitions the domain of $f$ into at most $2^c$ monochromatic cylinder intersections.
+	\end{lemma}
+	
+	\begin{proof}
+		Under the number of forehead setting, players send they bits according to the input of all other players and the bits that has been communicated. In other words, the bits sent by player $i$ does not depend on the input for player $i$ which is $x^{(i)}$.\\
+		\\
+		This can be viewed as that a bit sent by player $i$ is defined by some cylinders in the $i$-th direction and the output of the protocol can be defined by the intersection of these cylinders.\\
+		\\
+		Thus if the communication takes $c$ bits, there are at most $2^c$ monochromatic possible cylinder intersections.
+	\end{proof}
+	
+	
+	
+	 
+	\section{Discrepancy}
+	
+	Having generalized the notion of rectangles to the multiparty setting, we could hope that all the lower bound techniques also generalize. That unfortunately does not appear to be the case. The only technique that generalizes to this setting is discrepancy.
+	
+	\begin{definition}
+		For any distribution $\mu$ on $\calX^k$, 
+		the \emph{$\mu$-discrepancy} of $f : \calX^k \to \{0,1\}$ is
+		\[
+		\disc_\mu(f) = \max_{S} 
+		\left| \mu\big( S \cap f^{-1}(0) \big) - \mu\big( S \cap f^{-1}(1)\big) \right|
+		\]
+		where the maximum is over all cylinder intersections $S \subseteq \calX^k$.
+	\end{definition}
+	
+	
+	\begin{lemma}
+		For every function $f : \calX^k \to \{0,1\}$ and distribution $\mu$ on $\calX^k$,
+		\[
+		D(f) = \Omega\left( \log \frac{1}{\disc_\mu(f)}\right).
+		\]
+	\end{lemma}
+	
+	\begin{proof}
+	(Method1)We can use the similar proof for the discrepancy bound for the two-party case.\\
+	\\
+	If the protocol $\pi$ computes the function f, then we have that:\\
+	\\
+	$Pr[\pi(X) = f(X)] = 1$\\
+	$Pr[\pi(X) \neq f(X)] = 0$ where $X \in \calX^k$\\
+	Thus $Pr[\pi(X) = f(X)] - Pr[\pi(X) \neq f(X)]= 1$\\
+	\\
+	Then we have that for any cylinder intersections partitions, protocol $\pi$ and distribution $\mu$\\
+	$\sum_{S}\sum_{X\in S} Pr[select\ X]\ *\ (Pr[\pi(X) = f(X)] - Pr[\pi(X) \neq f(X)]) = 1$\\
+	$\sum_{S}\sum_{X\in S} \mu(X)\ *\ |Pr[\pi(X) = f(X)] - Pr[\pi(X) \neq f(X)]| \ge 1$\\
+	$\sum_{S}\sum_{X\in S} \mu(X)\ *\ |Pr[\pi(X) = 0] - Pr[\pi(X) = 1]| \ge 1$\\
+	$\sum_{S}\sum_{X\in S} |\mu(X)Pr[\pi(X) = 0] - \mu(X)Pr[\pi(X) = 1]| \ge 1$\\
+	$\sum_{S} |\mu\big( S \cap f^{-1}(0) \big) - \mu\big( S \cap f^{-1}(1)\big)|  \ge 1$\\
+	$\alpha * \max_{S} |\mu\big( S \cap f^{-1}(0) \big) - \mu\big( S \cap f^{-1}(1)\big)|  \ge 1$ where $\alpha$ is the greatest possible number of cylinder intersections (monochromatic for this case)\\
+	$\alpha * \disc_\mu(f) \ge 1$\\
+	$\alpha \ge \frac{1}{\disc_\mu(f)}$\\
+	\\
+	By previous lemma, when there is at least $\alpha$ cylinder intersections, there must be at least $log\alpha$ communication bits, thus $D(f) = \Omega\left( \log \frac{1}{\disc_\mu(f)}\right)$.\\
+		\\
+	(Method2)\\
+	Let $M$ be the cylinder with largest $\mu(C_i)$, and say there are $l$ cylinders,\\
+	 \\
+	$1=\mu(C_1\cup C_2\cup C_3...\cup C_l)$\\
+	$\leq \mu(C_1)+\mu(C_2)+...+\mu(C_l)$\\
+	$\leq l\mu(M)$\\
+	$\leq 2^d\mu(M)$\\
+	 \\
+	Thus $d\ge log\frac{1}{disc_{\mu}(f)}$
+	\end{proof}
+	
+	\exercises
+	
+	\begin{exercise}
+		We can also consider \emph{randomized} multiparty communication protocols. Show that for every function $f$, every distribution $\mu$, and every $\epsilon \le \frac12$, we also have
+		\[
+		R_\epsilon(f) \ge \log \frac{1-2\epsilon}{\disc_\mu(f)}.
+		\]
+	\end{exercise}
+	
+	
+	 
+	\section{Generalized inner product II}
+	
+	We can use the discrepancy bound to give a lower bound on the communication complexity of the generalized inner product function.
+	
+	\begin{theorem}
+		$D(\GIP^k) = \Omega(\frac{n}{4^k})$.
+	\end{theorem}
+	
+	\begin{proof}
+		We consider the discrepancy of $GIP^k$ under uniform distribution $\mu$ and solve it by induction on $k$.\\
+		\\
+		First think about the base case where $k=2$, in Chapter 3 we have proven that $\disc_\mu(IP) \leq 2^{-n/2} \leq 2^{-\frac{n}{4^k}}$.\\
+		\\
+		Now we prove that if for $k = i$ the statement $\disc_\mu(GIP^k) \leq 2^{-\frac{n}{4^k}}$ stands true, then for $k = k+1$ the statement is also true by inductive steps.\\
+		\\
+		Say for $k = i$, we have that $\disc_\mu(GIP^i) = \max_{S} 
+		\left| \mu\big( S \cap f^{-1}(0) \big) - \mu\big( S \cap f^{-1}(1)\big) \right| \leq 2^{-\frac{n}{4^i}}$. Then consider the case for $k = i+1$, we are adding a vector of dimension $n$ that is uniformly chosen at random from $\{0,1\}^k$ and compute the new result of $GIP^{k+1}$. \\
+		\\
+		First note that since our distribution is uniform, the probability of any index in the matrix to be $0$ is $\frac12$, and if one index in any column is $0$, the same position of $GIP^k$ will be $0$.\\
+		Thus by adding a new vector, we increase the expectation value of $\mu\big( S \cap f^{-1}(0) \big)$ by $\frac12 * \mu\big( S \cap f^{-1}(1)\big)$ and decrease the value of $\mu\big( S \cap f^{-1}(1)\big)$ by half. Then the value of discrepancy will decrease by a factor of $4$, and thus we have for $k=i+1$, $\disc_\mu(GIP^k) \leq 2^{-\frac{n}{4^{i+1}}} = 2^{-\frac{n}{4^k}}$.\\
+		\\
+		Thus we have that $\disc_\mu(GIP^k) \leq 2^{-\frac{n}{4^k}}$, and by the previous lemma we have that\\
+		$D(GIP^k) \ge  \log \frac{1}{2^{-\frac{n}{4^k}}} = \log {2^{\frac{n}{4^k}}} =\Omega(\frac{n}{4^k}) $.\\\
+		 \\
+		\textbf{Extra Reading}:\\
+		1. Cauchy-Schwarz inequality and some elementary arguments can prove this theorem as well.
+		2. Higher order of Fourier Analysis and Gowers uniformly norm.\\
+	\end{proof}
+	
+	
+	
+	 
+	\section{Multiparty Simultaneous Message Passing}
+	
+	In the \emph{simultaneous message passing} (SMP) model of multiparty communication complexity, we again consider the number-on-the-forehead model with blackboard communication with one change: all the players now write their messages on the blackboard simultaneously. Or, equivalently, all the bits communicated by the protocol depend on the other players inputs but \emph{not} on the messages previously sent.
+	
+	The minimum cost of an SMP multiparty communication protocol that computes a function $f : \calX^k \to \{0,1\}$ is denoted by $D^\parallel(f)$.
+	
+	A particularly interesting function to study in the multiparty SMP model is the $k$-party generalization of the $\Index$ function where $\Index^k : \{0,1\}^{n^{k-1}} \times [n]^{k-1} \to \{0,1\}$ where player $P_1$'s input is a $(k-1)$-dimensional array of bits, the $k-1$ other players all receive an index in $[n]$, and
+	\[
+	\Index^k(A,i_2,\ldots,i_k) = A[i_2,\ldots,i_k].
+	\]
+	
+	\begin{theorem}
+		$D^\parallel(\Index^k) = \Omega(n/k)$.
+	\end{theorem}
+	
+	\begin{proof}
+	We can reduce this problem to an one-way two-party index problem. Say we have $\Index^k(A,i_2,\ldots,i_k) = A[i_2,\ldots,i_k]$, where Alice holds $A$ and Bob holds ${i_2,\ldots,i_k}$.\\ 
+	 \\
+	Assume there is an one-way protocol $\Pi$ that solves this two-party version with $<\frac{n}{k}$ bits.\\ 
+	 \\
+	Now in mutli-party case consider player $j\in {2,...,k}$.\\
+	 \\
+	The other indices Player $j$ sees: $[n]^{k-2}$\\
+	For each $t\in [n]^{k-2}$,\\
+	Alice sends Bob message $j$ from $\Pi$ on the input $(A,t)$.\\
+	 \\
+	This gives us that \\
+	$n^{k-2}\cdot k=n^{k-1}$, and thus $D^\parallel(\Index^k) = \Omega(n/k)$.\\
+	\end{proof}
+	
+	\exercises
+	
+	\begin{exercise}
+		Show that $D(\Index^k) = \Theta(\log n)$.
+	\end{exercise}
+	
+	
+	 
+	\section{Sum Index}
+	
+	Another interesting variant of the index function is the 3-party function $\SumIndex : \{0,1\}^n \times [n] \times [n]$ defined by
+	\[
+	\SumIndex(A,i,j) = A[ i \oplus j]
+	\]
+	with $i \oplus j$ being the bitwise OR operation. (It is useful to consider only the case where $n$ is a power of $2$ for simplicity.)
+	
+	\begin{theorem}
+		$D^\parallel(\SumIndex) = \Omega(\sqrt{n})$.
+	\end{theorem}
+	
+	\begin{proof}
+	Say there is a protocol $\Pi$ that solves SUM INDEX problem, we can solve INDEX problem in one-way setting with $\Pi$ as well.\\
+	 \\
+	Say Alice has input $A \in \{0,1\}^n$ which is equivalent to $A$ in SUM INDEX,\\
+	Say Bob has input $l \in [n]$ which we will convert to $(i,j)$ such that $i\oplus j=l$.\\
+	 \\
+	Now Alice simulates player 2+3: communication$=2\cdot c\cdot 2^{\frac{logn}{2}}=2c\sqrt{n}=\Omega(n)$ bits.\\
+	Then Bobs receives message from Alice, simulates referee and outputs the result. \\
+	 \\
+	Thus we have $c=\Omega(\sqrt{n})$ bits of communication, and by reduction and lower bound of one-way INDEX problem, we hanve that $D^\parallel(\SumIndex) = \Omega(\sqrt{n})$.\\
+	\end{proof}
+	
+	\exercises
+	
+	\begin{exercise}
+		Prove that $D^\parallel(\SumIndex) = o(n)$.
+	\end{exercise}
+	
+	\begin{open}
+		The best bounds on the SMP complexity of the $\SumIndex$ function are
+		\[
+		\Omega(\sqrt{n}) \le D^\parallel(\SumIndex) \le O(n^{0.73}).
+		\]
+		Can you improve either the upper or the lower bound?
+	\end{open}
+\end{document}

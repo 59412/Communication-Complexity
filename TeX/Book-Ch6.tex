@@ -1,0 +1,274 @@
+\chapter[CH06]{ One-way communication and simultaneous message passing}
+
+
+Every communication complexity question we have studied so far in this course have been set in the model where there are two players, Alice and Bob, who exchange bits with each other to compute functions on their joint inputs. This is of course not the only model of communication that is of interest---other models where we change the number of parties or restrict how messages can be sent between them have also been studied extensively. In this chapter, we examine the communication complexity of functions when the communication between Alice and Bob is restricted.
+
+\newpage
+
+
+\section{One-way communication complexity}
+
+The first modification to the standard communication complexity setting that we will consider is the \emph{one-way communication} model, where the only communication taking place during a protocol is from Alice to Bob; then Bob outputs the value of the function.
+
+\begin{definition}[One-way protocol]
+	A communication protocol $\pi$ is a \emph{one-way protocol} if all the internal nodes except the ones right above the leaves in the rooted binary tree $T(\pi)$ are labelled with $A$.
+\end{definition}
+
+As in the standard two-way communication setting, we can consider deterministic, public-coin, and private-coin protocols.
+
+\begin{definition}[One-way communication complexity]
+	The deterministic and (public-coin) randomized \emph{one-way communication complexities} of a function $f : \calX \times \calY \to \{0,1\}$, denoted
+	\[
+	D^{\rightarrow}(f) \qquad \mbox{and} \qquad R^{\rightarrow}(f)
+	\]
+	respectively, are the minimum cost of a deterministic one-way protocol that computes $f$ and of a public-coin randomized one-way protocol that computes $f$ with error at most $\frac13$, respectively.
+\end{definition}
+
+\begin{remark}
+	We can also define one-way analogues of the other models of communication such as distributional complexity, private-coin randomized complexity, etc.
+\end{remark}
+
+The communication complexity of some functions remains identical in the one-way and two-way settings.
+
+\begin{theorem}
+	The one-way communication complexity of $\Eq : \{0,1\}^n \times \{0,1\}^n \to \{0,1\}$ satisfies
+	\[
+	D^\rightarrow(\Eq) = D(\Eq) = \Theta(n) \qquad \mbox{and} \qquad 
+	R^\rightarrow(\Eq) = R(\Eq) = \Theta(1).
+	\]
+\end{theorem}
+
+\begin{proof}
+	i$)$Since the lower bound of two-way communication protocol is lower than or equals to the lower bound of one-way communication protocol, we have $D^\rightarrow(\Eq) \ge (\Eq)$, $D^\rightarrow(\Eq) = \Omega(n)$.\\
+	\\
+	Now consider the deterministic protocol where Alice sends Bob the whole message and Bob returns the result of $EQ(x,y)$. The communication cost of this protocol is $n+1$, thus $D^\rightarrow(\Eq) = O(n)$, which gives $D^\rightarrow(\Eq) = \Theta(n)$.\\
+	\\
+	ii$)$ First note that the public-coin randomized EQ protocol that uses 3 bits of communication with error probability 1/4 is a one-way communication protocol. Thus the upper bound of $R^\rightarrow(\Eq)$ is still O(1). Thus $R^\rightarrow(\Eq)= \Theta(1) = R(\Eq) $.
+\end{proof}
+
+
+
+\section{Index function}
+
+In general, however, the one-way and two-way complexity of a function can differ greatly. A simple example that highlights this difference is the \emph{index function} $\Index : \{0,1\}^n \times [n] \to \{0,1\}$ defined by
+\[
+\Index(x,i) = x_i.
+\]
+
+\begin{theorem}
+	The communication complexity of the $\Index : \{0,1\}^n \times [n] \to \{0,1\}$ function satisfies
+	\[
+	D(\Index) = O(\log n) \qquad \mbox{and} \qquad D^\rightarrow(\Index) = \Omega(n).
+	\]
+\end{theorem}
+
+\begin{proof}
+	Think of a deterministic protocol where Bob sends the index $i$ in binary to Alice and Alice returns the $i$th entry to Bob which is a single bit. This gives a upper bound of $O(logn)$ to $D(\Index)$.\\
+	\\
+	For one-way lower bound, note that if $D^\rightarrow(\Index) \leq n$, there exists some $x \neq x'$ in the same node of the protocol tree. \\
+	\\
+	In other words, $f(x)=f(x') for some x\neq x'$. Then $INDEX(x,i)=INDEX(x',i)$ but this is a contradiction. So we have that $D^\rightarrow(\Index) = \Omega(n)$.\\
+\end{proof}
+
+
+
+
+\section{One-way vs.~two-way communication complexity}
+
+The gap between the one-way and two-way communication complexity of the index function is the largest possible.
+
+\begin{theorem}
+	For every function $f : \calX \times \calY \to \{0,1\}$,
+	\[
+	D^\rightarrow(f) \le 2^{D(f)}+1.
+	\]
+\end{theorem}
+
+\begin{proof}
+	Assume there is a two-way deterministic communication protocol that computes $f$ with cost $D(f)$. \\
+	\\
+	Now we try to simulate this protocol with an one-way communication protocol: \\
+	\\
+	Whenever Alice is waiting for a bit from Bob, she will respond to both cases where Bob sent 0 or 1. Since in original protocol Bob sent Alice at most n bits, now Alice will respond with at most $2^n$ bits. Plus the bit that Bob may return, we will have that $D^\rightarrow(f) \le 2^{D(f)}+1$.
+\end{proof}
+
+
+
+
+\section{Index II}
+
+We can strengthen our lower bound on the one-way communication complexity of the index function to show that it holds in the public-coin randomness model as well.
+
+\begin{theorem}
+	The one-way randomized communication complexity of the $\Index : \{0,1\}^n \times [n] \to \{0,1\}$ function is
+	\[
+	R^\rightarrow(\Index) = \Omega(n).
+	\]
+\end{theorem}
+
+\begin{proof}
+	(Method1: Combintorics)\\ 
+	Consider any one-way randomized communication protocol $\pi$ that computes INDEX as following:\\
+	\\
+	Alice sends out some bits, say $a$, that depends on her own private randomness and $x$, to Bob. Then Bob returns either 0 or 1 according to the received value and $i$. However, since random protocols are just distribution of deterministic protocols, we can just prove the lower bound for every deterministic version of $\pi$, in other words, for any fixed randomness.\\
+	\\
+	Now think Alice's action as a function $A$ acts on $x$ and Bob returns either 0 or 1 according to the value of $A(x)$ and $i$, we can assume Bob can interpret A(x) as a vector and simply returns the $i$th entry.\\
+	\\
+	This yields the error probability as the hamming distance between $x$ and $A(x)$ over $n$, $\frac{HD(x,A(x))}{n}$, for fixed $x$ and Alice's private randomness. \\
+	\\
+	Now to prove a lower bound of $O(n)$, assume $A(x)$ has size $cn$ for some constant $c$. Now only consider Alice's input with error probability $\leq \frac14$, by using Stirling's approximation on the expression $1 + {n \choose 1} + {n \choose 1} + ... + {n \choose \frac{n}{4}}$ which is for the inputs with error probability $\ge \frac14$, we conclude that more than $\frac12$ of the inputs are with error probability larger than $\frac14$. This gives a lower bound for total error probability of $\frac18$, and the lower bound on error probability with $cn$ bits of communication also gives the lower bound $\Omega(n)$ for INDEX. \\
+	\\
+	(Method2: Information Cost)\\
+	$|M|\ge H(M) \ge I(X;M) = \sum^n_{i=1} I(X_i;M|X_1,...,X_{i-1})$\\
+	$=\sum^n_{i=1} [H(X_i|X1,...,X_{i-1})-H(X_i|M_1X_1,...,X_{i-1})]$
+	$=\sum^n_{i=1} [1-H(X_i|M_1X_1,...,X_{i-1})]$\\
+	$=n-\sum^n_{i=1} H(X_i|M_1X_1,...,X_{i-1})$\\
+	$\ge n-\sum_{i=1}^{n}H(X_i|M)$\\
+	\\
+	$H(X_i|M)=\sum_{m\in M} H(X_i|M=m)Pr(M=m)$\\
+	$= \sum_{m\in M} (\frac23log(\frac32)+\frac13 log3)Pr(M=m)$\\
+	$\leq \frac23$\\
+	\\
+	Thus we have $R^\rightarrow(\Index) = \Omega(n)$.\\
+	\\
+	\textbf{Extra Reading:} Fano's Inequality \\
+\end{proof}
+
+
+
+
+\section{Disjointness}
+
+The lower bound on the index function can be used to obtain a simple proof of the $\Omega(n)$ lower bound on the one-way randomized communication complexity of the disjointness function.
+
+\begin{theorem}
+	The one-way randomized communication complexity of the $\Disj : \{0,1\}^n \times \{0,1\}^n \to \{0,1\}$ function is
+	\[
+	R^\rightarrow(\Disj) = \Omega(n).
+	\]
+\end{theorem}
+
+\begin{proof}
+	First, by way of contradiction, assume that we can solve DISJOINTNESS with less than $cn$ bits for constant $c$ and large enough $n$. Then think of the following special case: \\
+	\\
+	Value of $y$ from Bob is a binary string with exactly one 1 on $i$th index and $n-1$ 0's on other indices. Then $DISJ(x,y) = 0$ if the $i$th index of Alice's input is 1 as well and 0 otherwise. In other words, Bob just outputs the $i$th bit of $x$, which is an equivalent of INDEX function. \\
+	\\
+	Since now we will be able to compute INDEX with less bits than its lower bound, by contradiction, $R^\rightarrow(\Disj) = \Omega(n)$.
+\end{proof}
+
+\begin{remark}
+	Your proof should \emph{not} use our previous lower bounds on the two-way randomized communication complexity of the disjointness function; instead, you should be able to use the lower bound on the one-way communication complexity of the index function to get this result.
+\end{remark}
+
+
+
+
+\section{Gap Hamming}
+
+Define the \emph{Hamming distance} between strings $x,y \in \{0,1\}^n$ to be $\dHam(x,y) = |\{i \in [n] : x_i \neq y_i\}|$.
+The \emph{gap Hamming function} $\GHD : \{0,1\}^n \times \{0,1\}^n \to \{0,1,*\}$ is the partial function defined by
+\[
+\GHD(x,y) = \begin{cases}
+1 & \mbox{if } \dHam(x,y) = \frac n2 \\
+0 & \mbox{if } |\dHam(x,y) - \frac n2| \ge \sqrt{n} \\
+* & \mbox{otherwise.}
+\end{cases}
+\] 
+(We assume throughout this section that $n$ is even.)
+
+\begin{definition}
+	A randomized protocol \emph{computes} the partial function $f : \calX \times \calY \to \{0,1,*\}$ with error at most $\epsilon$ if for every input $(x,y) \in f^{-1}(0) \cup f^{-1}(1)$, it outputs the value $f(x,y)$ with probability at least $1-\epsilon$.\footnote{For the inputs in $f^{-1}(*)$, the protocol is free to output anything.}
+\end{definition}
+
+\begin{theorem}
+	The one-way randomized communication complexity of the $\GHD : \{0,1\}^n \times \{0,1\}^n \to \{0,1\}$ function is
+	\[
+	R^\rightarrow(\GHD) = \Omega(n).
+	\]
+\end{theorem}
+
+\begin{proof}
+	Idea: Use public randomness to reduce: note that running GHD on Alice and Bob assume the public randomness is Alice's input, then if GHP = 0/1 the values from Alice and Bob are negative/positive correlation.\\
+	\\
+	$Pr[a_i=b_i] =Pr[||x_{-i}-r_{-i}||=\frac{n-1}{2}]\cdot Pr[a_1=b_1| ||x_{-i}-r_{-i}||=\frac{n-1}{2}]+$\\
+	$Pr[||x_{-i}-r_{-i}||\neq\frac{n-1}{2}]\cdot Pr[a_1=b_1| ||x_{-i}-r_{-i}||\neq\frac{n-1}{2}]$ \\
+	$-=O(\frac{1}{\sqrt{n}})\cdot 1+(1-O(\frac{1}{\sqrt{n}}))\cdot \frac12$ if $x_i=1$\\
+	$-=O(\frac{1}{\sqrt{n}})\cdot 0+(1-O(\frac{1}{\sqrt{n}}))\cdot \frac12$ if $x_i=0$\\
+	\\
+	Thus $Pr[a_i=b_i]=\frac12+\frac{1}{\sqrt{n}}$ if $x=1$\\
+	$Pr[a_i=b_i]=\frac12-\frac{1}{\sqrt{n}}$ if $x=0$\\ 
+	\\
+	And Alice, Bob are positively/negatively correlated.\\
+	
+\end{proof}
+
+
+
+\section{Simultaneous message passing}
+
+In the \emph{simultaneous message passing (SMP)} model of communication, Alice and Bob both send messages to a third party that we will call the Referee, without seeing each other's transmissions. (We picture both Alice and Bob sending their communications to the referee simultaneously.) Note that the Referee does not see either Alice or Bob's inputs, and must then output the result of the protocol using only the messages received from both parties. In the private-coin model of SMP communication, Alice and Bob each have a private source of randomness that is not visible to any other party.
+
+\begin{definition}
+	The \emph{SMP (private randomness) complexity} with error $\epsilon$ of a function $f : \calX \times \calY \to \{0,1\}$, denoted
+	\[
+	R^{\parallel,\mathrm{priv}}_\epsilon(f),
+	\] 
+	is the minimum (worst-case) communication cost of any private-coin SMP protocol that computes $f$ with error at most $\epsilon$ on any input $(x,y) \in \calX \times \calY$.
+\end{definition}
+
+As usual, we write $R^{\parallel,\mathrm{priv}}(f) = R^{\parallel,\mathrm{priv}}_{1/3}(f)$.
+
+\begin{theorem}
+	The SMP complexity of every function $f : \calX \times \calY \to \{0,1\}$ satisfies
+	\[
+	R^{\parallel,\mathrm{priv}}(f) = \Omega(\sqrt{D(f)}).
+	\]
+\end{theorem}
+
+\begin{proof}
+	Idea: Consider the success probability of a protocol in which Alice and Bob send $t$ messages to the referee instead of $1$, when all $t$ messages are sent for the same input but with independent randomness.\\
+	\\
+	Let $\Pi$ be an SMP protocol with cost $c$, let $M_x$,$V_y$ be the distance on messages by Alice and Bob on input $x$ and $y$.\\
+	\\
+	Then $Pr_{m_A\sim M_x,m_B\sim V_y}[R(m_A,m_B)=f(x,y)]\ge\frac23$.\\
+	\\
+	\textbf{Claim}: There exists $T_x=$ set of $O(c)$ messages that Alice sends such that for all $m_B$ from Bob,\\
+	\\
+	$|Pr_{m_A\sim T_x}[R(m_A,m_B)=1]-Pr_{m_A\sim M_x}[R(m_A,m_B)=1]| \leq \frac1{100}$\\
+	\\
+	Note this can be proven with Chernoff Bound and Union Bound.\\
+	
+	A similar Claim will be that  there exists $T_y=$ set of $O(c)$ messages that Bob sends such that for all $m_A$ from Alice,\\
+	\\
+	$|Pr_{m_B\sim T_y}[R(m_A,m_B)=1]-Pr_{m_B\sim V_y}[R(m_A,m_B)=1]| \leq \frac1{100}$\\
+	\\
+	Combining both results will give $D(f)\leq O(R^{\parallel,priv}(f)^2)$\\
+	\\
+	And thus $R^{\parallel,\mathrm{priv}}(f) = \Omega(\sqrt{D(f)})$.
+\end{proof}
+
+
+
+\section{Equality X}
+
+\begin{theorem}
+	The SMP complexity of the equality function $\Eq : \{0,1\}^n \times \{0,1\}^n \to \{0,1\}$ is
+	\[
+	R^{\parallel,\mathrm{priv}}(\Eq) = \Theta(\sqrt{n}).
+	\]
+\end{theorem}
+
+\begin{proof}
+	By Theorem 7 and the fact that $D(EQ) = O(n)$, we have the lower bound $R^{\parallel,\mathrm{priv}}(\Eq) = \Omega(\sqrt{n})$.\\
+	\\
+	\textbf{Note}: By using (basic but still remarkable) results from error-correcting codes, it is sufficient to design a randomized protocol that computes the partial function $\Eq^* : \{0,1\}^n \times \{0,1\}^n \to \{0,1,*\}$ defined by
+	\[
+	\Eq^*(x,y) = \begin{cases}
+	1 & \mbox{if } x = y \\
+	0 & \mbox{if } \dHam(x,y) = \frac n2 \\
+	* & \mbox{otherwise}
+	\end{cases}
+	\]
+	with error at most $\frac13$.
+	
+\end{proof}

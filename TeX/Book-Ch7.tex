@@ -1,0 +1,365 @@
+\chapter[CH07]{Multiparty communication}
+
+
+In this chapter, we move beyond the two-party setting of communication complexity and consider the communication complexity of functions that need to be computed by 3 or more parties.
+
+There are two broad classes of models for multiparty communication complexity. In both of them, the input to the function is divided among the $k$ parties. In the \emph{number in hand} model, each party sees their own input and none of the other players' inputs. This model is a natural extension of our two-party communication model, and it is apparent that it only gets harder when there are more players involved. As a result, all the lower bounds that we have established in previous chapters apply to (natural variants of the functions we have seen for) this setting as well.
+
+In the \emph{number on the forehead} model, by contrast, every player sees \emph{all} the inputs except their own. In this model, adding new players now make the function easier to compute, not harder. The lower bounds we have developed no longer apply, and we need to develop new tools to understand which functions remain hard to compute in this setting.
+
+\newpage
+
+\section{Number-on-the-forehead model}
+
+In the \emph{$k$-party number on the forehead} (NOF) model of communication complexity, $k$ players $P_1,\ldots,P_k$ aim to compute a function $f : \calX^k \to \calY$ for some finite sets $\calX$ and $\calY$. On input $x_1,\ldots,x_k$, each player $P_i$ sees \emph{all} the inputs \emph{except} $x_i$. A \emph{protocol} determines which player sends the next bit of communication; the bit sent by player $P_i$ depends on the inputs $x_1,\ldots,x_{i-1},x_{i+1},\ldots,x_k$ as well as the preivous messages. All messages communicated by a player are seen by \emph{all} other players. This is known as the \emph{blackboard} setting of communication.
+
+The \emph{cost} of a protocol is the maximum number of bits communicated before the protocol halts, where the maximum is taken over all possible inputs. A protocol \emph{computes} the function $f$ if all the players know $f(x)$ at the end of the protocol. As in the two-player setting, we can represent a protocol as a tree and define the function that it computes as the one determined by the value at each leaf.
+
+The \emph{deterministic communication complexity} of a function $f : \calX^k \to \calY$, which will again be denoted by $D(f)$, is the minimum cost of a $k$-party number-on-the-forehead communication protocol that computes $f$ in the blackboard model.
+
+\begin{theorem}
+	Almost all functions $f : (\{0,1\}^{n})^k \to \{0,1\}$ have communication complexity $D(f) = \Omega(n)$.
+\end{theorem}
+
+\begin{proof}
+	Consider a function that requires all $n\cdot k$ input bits to correctly compute the function. Then for any player to be able to compute this function, he must have all the bits in its input.\\
+	\\
+	For such functions, since a player can see all other $n\cdot (k-1)$ bits, all he requires is any other player to send his own $n$ bits. Then after computation, this player can return the result by simply sending $0$ or $1$.\\
+	\\
+	This requires at least $n+1$ bits, thus for functions that requires all $n\cdot k$ bits to be correctly computed, its protocols need communication of at least $n+1$ bits, hence we have a lower bound of $\Omega(n)$ on $D(f)$.\\
+	\\
+	(Formula) Note  we can count the number of functions with cost $c$ protocol which is\\
+	$\leq2^{2c}\cdot 2^{2^{n(k-1)}\cdot 2^c}\cdot k^{2c}$, and we can get the same result as above.\\
+\end{proof}
+
+\exercises
+
+\begin{exercise}
+	Show that every function $f : (\{0,1\}^{n})^k \to \{0,1\}$ has multiparty communication complexity $D(f) \le n+1$.
+\end{exercise}
+
+\begin{open}
+	Identify any explicit function $f : (\{0,1\}^{n})^k \to \{0,1\}$ with $k \ge \log n$ that has communication complexity $\omega(1)$.
+\end{open}
+
+
+
+\section{Equality XI}
+
+Some functions can be much easier in the multiparty communication complexity model. Consider for instance the extension of the equality function for $k$ players $\Eq_k : (\{0,1\}^n)^k \to \{0,1\}$ defined by
+\[
+\Eq^k(x_1,\ldots,x_k) = \begin{cases}
+1 & \mbox{if } x_1 = x_2 = \cdots = x_k \\
+0 & \mbox{otherwise.}
+\end{cases}
+\]
+\begin{theorem}
+	For any $k \ge 3$, $D(\Eq^k) \le 2$.
+\end{theorem}
+
+\begin{proof}
+	Consider following multi-party communication protocol:\\
+	\\
+	-Select first and second player, player $1$ and player $2$\\
+	-Player $1$ computes the result of $EQ^{k-1}(x_2,x_3,...,x_k)$\\
+	-Player $1$ sends the result bit, say $r$, to the blackboard\\
+	-Player $2$ computes the result of $EQ^{k-1}(x_1,x_3,...,x_k)$\\
+	-Say the result bit is $t$, player $j$ then sends $AND(s,t)$ as the output of the protocol.\\
+	\\
+	This protocol correctly computes $\Eq^k(x_1,\ldots,x_k)$ as it first checks if $(x_2,...,x_k)$ are all equal, then checks if $(x_1,x_3,...,x_k)$ are all equal. If they both are, then all of $x_i$'s for $1 \leq i \leq k$ are equal, and if at least one of them are not all equal, it implies otherwise. \\
+	\\
+	As this protocol correctly computes $\Eq^k(x_1,\ldots,x_k)$ and takes $2$ bits of communication for any input, we have  $D(\Eq^k) \le 2$. 
+\end{proof}
+
+
+
+
+\section{Majority Inner Product}
+
+Other functions also have very efficient protocols in the multiparty communication complexity setting. 
+
+For three bits $a,b,c$, define the \emph{majority} function $\Maj : \{0,1\}^3 \to \{0,1\}$ to be $\Maj(a,b,c) = 1$ if $a+b+c \ge 2$ and $0$ otherwise. The \emph{Majority inner product} function $\MIP : (\{0,1\}^n)^3 \to \{0,1\}$ is defined by
+\[
+\MIP(x,y,z) = \bigoplus_{i \in [n]} \Maj(x_i,y_i,z_i).
+\]
+\begin{theorem}
+	$D(\MIP) \le 3$.
+\end{theorem}
+
+\begin{proof}
+	Consider following multi-party communication protocol:\\
+	\\
+	-Player $x$ first looks at the input of player $y$ and player $z$\\
+	-Player $x$ calculates $\bigoplus_{i \in [n]} Z(y_i,z_i)$ where $Z(y_i,z_i) = 1$ iff $y_i = z_i = 1$\\
+	-Player $x$ sends this result to blackboard, say the result is $r_x$ \\
+	\\
+	-Similarly, Player $y$ looks at the input of player $x$ and player $z$\\
+	-Player $y$ calculates $\bigoplus_{i \in [n]} Z(x_i,z_i)$ where $Z(x_i,z_i) = 1$ iff $x_i = z_i = 1$\\
+	-Player $y$ sends this result to blackboard, say the result is $r_y$ \\
+	\\
+	-Player $z$ looks at the input of player $x$ and player $y$\\
+	-Player $z$ calculates $\bigoplus_{i \in [n]} Z(x_i,y_i)$ where $Z(x_i,y_i) = 1$ iff $x_i = y_i = 1$\\
+	-Say result is $r_z$, players $z$ then sends $r_x \oplus r_y \oplus r_z$ as the protocol's output \\
+	\\
+	This protocol correctly computes $\MIP(x,y,z)$ by following observation:\\
+	\\
+	-If at $i$-th position, $x$,$y$ and $z$ all have one, then this position will increase the value $r_x \oplus r_y \oplus r_z$ by $3$, which equals to $1$ in binary.\\
+	-If at $i$-th position, two of $x$,$y$ and $z$ all have one,  then this position will also increase the value $r_x \oplus r_y \oplus r_z$ by $1$.\\
+	-Otherwise, this position does not increase the value $r_x \oplus r_y \oplus r_z$.\\
+	\\
+	This equals the result of $\MIP(x,y,z)$. \\
+	As this protocol correctly computes $\MIP(x,y,z)$ and takes $3$ bits of communication for any input, we have  $D(\MIP) \le 3$. 
+\end{proof}
+
+
+
+\section{Generalized Inner Product}
+
+Other functions become easier, but non-trivial, when the number of players is greater than 2 but less than $\log n$.
+
+The \emph{generalized inner product} function $\GIP^k : (\{0,1\}^n)^k \to \{0,1\}$ is defined by
+\[
+\GIP^k(x^{(1)},\ldots,x^{(k)}) = \bigoplus_{i \in [n]} x^{(1)}_i \wedge x^{(2)}_i \wedge \cdots \wedge x^{(k)}_i.
+\]
+When we view the input to the function as a $k \times n$ matrix, the function takes the value $1$ if and only if the number of all-one columns of this matrix is odd. 
+
+\begin{theorem}
+	$D(\GIP^k) = O(\frac{nk}{2^k})$.
+\end{theorem}
+
+\begin{proof}
+	Consider the following protocol:\\
+	\\
+	First we divide the $n$ bits into blocks with size $2^{k-1}-1$, where the last block may have size $
+	\leq 2^{k-1}-1$\\
+	\\
+	Then any player, say player $1$, will be able to decide at least one column with size $k$ that does not exist in each block.
+	This is because there are $2^{k-1}$ combinations for last $k-1$ bits, so player $1$ can simply choose the column with size $k-1$ that a block doesn't have, then fill either $0$ or $1$ at the beginning.\\
+	\\
+	Player $1$ sends all determined vectors to all other players. Then for each block, let the vector that doesn't exist in this block be $v$. We rearrange the order of bits each player holds and bits in $v$ by the same permutation in each block, so that $v$ is in the format $(0,0,0,...,0,1,1,1,...,1,1)$ where the first $1$ is at the $l$-th position.\\
+	\\
+	On the resulted $\leq 2^{k-1}-1$ vectors, we do the following:\\
+	For $1 \leq i \leq l$\\
+	\\
+	\hspace*{10mm}Player $i$(index after permutation) computes the parity of number of columns in this block with following format:\\
+	\hspace*{20mm}$(0,0,0,....,0,*,1,1,...,1)$ where the $*$ occurs at the $i$-th position.\\
+	\hspace*{10mm}Then player $i$ sends this result to all other players.\\
+	End\\
+	\\
+	Then all players can sum over the results sent by each player and all get the result of $\GIP^k(x^{(1)},\ldots,x^{(k)})$.\\
+	\\
+	Proof of correctness: \\
+	Let $p_i$ be the parity of the vector $(0,0,0,...,0,1,1,...,1,1)$ where the first $1$ is at $i$-th position. Then at each round, the parity of $(0,0,0,....,0,*,1,1,...,1)$ for player $i$ we calculated is actually $p_i + p_{i+1}$. And if we sum this over, we will get the value of $p_1 + p_l$.\\
+	However, by our setting, we know that the vector $v$ does not exist in the current block, thus the value of $p_l = 0$, and the value we get is actually $p_1$, which is the parity of all-1 columns in current block. Then we get the answer if all players sum all results up.\\
+	\\
+	Run time:\\
+	Sends all $v$ vectors: $\frac{n}{2^{k-1}-1} \cdot k$ ($\#$ of blocks $\cdot$ length)\\
+	Result of each player: $\frac{n}{2^{k-1}-1} \cdot l \leq \frac{n}{2^{k-1}-1} \cdot k$ ($\#$ of blocks $\cdot$ iterations)\\
+	Thus $D(\GIP^k) = O(\frac{nk}{2^k})$.\\
+	Reference: The BNS Lower Bound for Multi\-Party Protocols is Nearly Optimal, V.Grolmusz
+\end{proof}
+
+
+
+
+\section{Cylinder intersections}
+
+Rectangles have a natural generalization in the number-on-the-forehead model in the form of \emph{cylinder intersections}.
+
+\begin{definition}
+	A \emph{cylinder} in $\calX^k$ \emph{in the $i$th direction} is a set $S \subseteq \calX^k$ such that whether an element $(x^{(1)},\ldots,x^{(k)}) \in S$ or not is independent of the value of $x^{(i)}$.
+\end{definition}
+
+\begin{definition}
+	The set $S \subseteq \calX^k$ is a \emph{cylinder intersection} if $S = \cap_{i \in [k]} S_i$ where each $S_i$ is a cylinder in the $i$th direction.
+\end{definition}
+
+Cylinder intersections can be used to bound the multiparty communication complexity of functions via the following fundamental lemma.
+
+\begin{lemma}
+	Every multiparty protocol that computes $f$ and has cost $c$ partitions the domain of $f$ into at most $2^c$ monochromatic cylinder intersections.
+\end{lemma}
+
+\begin{proof}
+	Under the number of forehead setting, players send they bits according to the input of all other players and the bits that has been communicated. In other words, the bits sent by player $i$ does not depend on the input for player $i$ which is $x^{(i)}$.\\
+	\\
+	This can be viewed as that a bit sent by player $i$ is defined by some cylinders in the $i$-th direction and the output of the protocol can be defined by the intersection of these cylinders.\\
+	\\
+	Thus if the communication takes $c$ bits, there are at most $2^c$ monochromatic possible cylinder intersections.
+\end{proof}
+
+
+
+
+\section{Discrepancy}
+
+Having generalized the notion of rectangles to the multiparty setting, we could hope that all the lower bound techniques also generalize. That unfortunately does not appear to be the case. The only technique that generalizes to this setting is discrepancy.
+
+\begin{definition}
+	For any distribution $\mu$ on $\calX^k$, 
+	the \emph{$\mu$-discrepancy} of $f : \calX^k \to \{0,1\}$ is
+	\[
+	\disc_\mu(f) = \max_{S} 
+	\left| \mu\big( S \cap f^{-1}(0) \big) - \mu\big( S \cap f^{-1}(1)\big) \right|
+	\]
+	where the maximum is over all cylinder intersections $S \subseteq \calX^k$.
+\end{definition}
+
+
+\begin{lemma}
+	For every function $f : \calX^k \to \{0,1\}$ and distribution $\mu$ on $\calX^k$,
+	\[
+	D(f) = \Omega\left( \log \frac{1}{\disc_\mu(f)}\right).
+	\]
+\end{lemma}
+
+\begin{proof}
+	(Method1)We can use the similar proof for the discrepancy bound for the two-party case.\\
+	\\
+	If the protocol $\pi$ computes the function f, then we have that:\\
+	\\
+	$Pr[\pi(X) = f(X)] = 1$\\
+	$Pr[\pi(X) \neq f(X)] = 0$ where $X \in \calX^k$\\
+	Thus $Pr[\pi(X) = f(X)] - Pr[\pi(X) \neq f(X)]= 1$\\
+	\\
+	Then we have that for any cylinder intersections partitions, protocol $\pi$ and distribution $\mu$\\
+	$\sum_{S}\sum_{X\in S} Pr[select\ X]\ *\ (Pr[\pi(X) = f(X)] - Pr[\pi(X) \neq f(X)]) = 1$\\
+	$\sum_{S}\sum_{X\in S} \mu(X)\ *\ |Pr[\pi(X) = f(X)] - Pr[\pi(X) \neq f(X)]| \ge 1$\\
+	$\sum_{S}\sum_{X\in S} \mu(X)\ *\ |Pr[\pi(X) = 0] - Pr[\pi(X) = 1]| \ge 1$\\
+	$\sum_{S}\sum_{X\in S} |\mu(X)Pr[\pi(X) = 0] - \mu(X)Pr[\pi(X) = 1]| \ge 1$\\
+	$\sum_{S} |\mu\big( S \cap f^{-1}(0) \big) - \mu\big( S \cap f^{-1}(1)\big)|  \ge 1$\\
+	$\alpha * \max_{S} |\mu\big( S \cap f^{-1}(0) \big) - \mu\big( S \cap f^{-1}(1)\big)|  \ge 1$ where $\alpha$ is the greatest possible number of cylinder intersections (monochromatic for this case)\\
+	$\alpha * \disc_\mu(f) \ge 1$\\
+	$\alpha \ge \frac{1}{\disc_\mu(f)}$\\
+	\\
+	By previous lemma, when there is at least $\alpha$ cylinder intersections, there must be at least $log\alpha$ communication bits, thus $D(f) = \Omega\left( \log \frac{1}{\disc_\mu(f)}\right)$.\\
+	\\
+	(Method2)\\
+	Let $M$ be the cylinder with largest $\mu(C_i)$, and say there are $l$ cylinders,\\
+	\\
+	$1=\mu(C_1\cup C_2\cup C_3...\cup C_l)$\\
+	$\leq \mu(C_1)+\mu(C_2)+...+\mu(C_l)$\\
+	$\leq l\mu(M)$\\
+	$\leq 2^d\mu(M)$\\
+	\\
+	Thus $d\ge log\frac{1}{disc_{\mu}(f)}$
+\end{proof}
+
+\exercises
+
+\begin{exercise}
+	We can also consider \emph{randomized} multiparty communication protocols. Show that for every function $f$, every distribution $\mu$, and every $\epsilon \le \frac12$, we also have
+	\[
+	R_\epsilon(f) \ge \log \frac{1-2\epsilon}{\disc_\mu(f)}.
+	\]
+\end{exercise}
+
+
+
+\section{Generalized inner product II}
+
+We can use the discrepancy bound to give a lower bound on the communication complexity of the generalized inner product function.
+
+\begin{theorem}
+	$D(\GIP^k) = \Omega(\frac{n}{4^k})$.
+\end{theorem}
+
+\begin{proof}
+	We consider the discrepancy of $GIP^k$ under uniform distribution $\mu$ and solve it by induction on $k$.\\
+	\\
+	First think about the base case where $k=2$, in Chapter 3 we have proven that $\disc_\mu(IP) \leq 2^{-n/2} \leq 2^{-\frac{n}{4^k}}$.\\
+	\\
+	Now we prove that if for $k = i$ the statement $\disc_\mu(GIP^k) \leq 2^{-\frac{n}{4^k}}$ stands true, then for $k = k+1$ the statement is also true by inductive steps.\\
+	\\
+	Say for $k = i$, we have that $\disc_\mu(GIP^i) = \max_{S} 
+	\left| \mu\big( S \cap f^{-1}(0) \big) - \mu\big( S \cap f^{-1}(1)\big) \right| \leq 2^{-\frac{n}{4^i}}$. Then consider the case for $k = i+1$, we are adding a vector of dimension $n$ that is uniformly chosen at random from $\{0,1\}^k$ and compute the new result of $GIP^{k+1}$. \\
+	\\
+	First note that since our distribution is uniform, the probability of any index in the matrix to be $0$ is $\frac12$, and if one index in any column is $0$, the same position of $GIP^k$ will be $0$.\\
+	Thus by adding a new vector, we increase the expectation value of $\mu\big( S \cap f^{-1}(0) \big)$ by $\frac12 * \mu\big( S \cap f^{-1}(1)\big)$ and decrease the value of $\mu\big( S \cap f^{-1}(1)\big)$ by half. Then the value of discrepancy will decrease by a factor of $4$, and thus we have for $k=i+1$, $\disc_\mu(GIP^k) \leq 2^{-\frac{n}{4^{i+1}}} = 2^{-\frac{n}{4^k}}$.\\
+	\\
+	Thus we have that $\disc_\mu(GIP^k) \leq 2^{-\frac{n}{4^k}}$, and by the previous lemma we have that\\
+	$D(GIP^k) \ge  \log \frac{1}{2^{-\frac{n}{4^k}}} = \log {2^{\frac{n}{4^k}}} =\Omega(\frac{n}{4^k}) $.\\\
+	\\
+	\textbf{Extra Reading}:\\
+	1. Cauchy-Schwarz inequality and some elementary arguments can prove this theorem as well.
+	2. Higher order of Fourier Analysis and Gowers uniformly norm.\\
+\end{proof}
+
+
+
+
+\section{Multiparty Simultaneous Message Passing}
+
+In the \emph{simultaneous message passing} (SMP) model of multiparty communication complexity, we again consider the number-on-the-forehead model with blackboard communication with one change: all the players now write their messages on the blackboard simultaneously. Or, equivalently, all the bits communicated by the protocol depend on the other players inputs but \emph{not} on the messages previously sent.
+
+The minimum cost of an SMP multiparty communication protocol that computes a function $f : \calX^k \to \{0,1\}$ is denoted by $D^\parallel(f)$.
+
+A particularly interesting function to study in the multiparty SMP model is the $k$-party generalization of the $\Index$ function where $\Index^k : \{0,1\}^{n^{k-1}} \times [n]^{k-1} \to \{0,1\}$ where player $P_1$'s input is a $(k-1)$-dimensional array of bits, the $k-1$ other players all receive an index in $[n]$, and
+\[
+\Index^k(A,i_2,\ldots,i_k) = A[i_2,\ldots,i_k].
+\]
+
+\begin{theorem}
+	$D^\parallel(\Index^k) = \Omega(n/k)$.
+\end{theorem}
+
+\begin{proof}
+	We can reduce this problem to an one-way two-party index problem. Say we have $\Index^k(A,i_2,\ldots,i_k) = A[i_2,\ldots,i_k]$, where Alice holds $A$ and Bob holds ${i_2,\ldots,i_k}$.\\ 
+	\\
+	Assume there is an one-way protocol $\Pi$ that solves this two-party version with $<\frac{n}{k}$ bits.\\ 
+	\\
+	Now in mutli-party case consider player $j\in {2,...,k}$.\\
+	\\
+	The other indices Player $j$ sees: $[n]^{k-2}$\\
+	For each $t\in [n]^{k-2}$,\\
+	Alice sends Bob message $j$ from $\Pi$ on the input $(A,t)$.\\
+	\\
+	This gives us that \\
+	$n^{k-2}\cdot k=n^{k-1}$, and thus $D^\parallel(\Index^k) = \Omega(n/k)$.\\
+\end{proof}
+
+\exercises
+
+\begin{exercise}
+	Show that $D(\Index^k) = \Theta(\log n)$.
+\end{exercise}
+
+
+
+\section{Sum Index}
+
+Another interesting variant of the index function is the 3-party function $\SumIndex : \{0,1\}^n \times [n] \times [n]$ defined by
+\[
+\SumIndex(A,i,j) = A[ i \oplus j]
+\]
+with $i \oplus j$ being the bitwise OR operation. (It is useful to consider only the case where $n$ is a power of $2$ for simplicity.)
+
+\begin{theorem}
+	$D^\parallel(\SumIndex) = \Omega(\sqrt{n})$.
+\end{theorem}
+
+\begin{proof}
+	Say there is a protocol $\Pi$ that solves SUM INDEX problem, we can solve INDEX problem in one-way setting with $\Pi$ as well.\\
+	\\
+	Say Alice has input $A \in \{0,1\}^n$ which is equivalent to $A$ in SUM INDEX,\\
+	Say Bob has input $l \in [n]$ which we will convert to $(i,j)$ such that $i\oplus j=l$.\\
+	\\
+	Now Alice simulates player 2+3: communication$=2\cdot c\cdot 2^{\frac{logn}{2}}=2c\sqrt{n}=\Omega(n)$ bits.\\
+	Then Bobs receives message from Alice, simulates referee and outputs the result. \\
+	\\
+	Thus we have $c=\Omega(\sqrt{n})$ bits of communication, and by reduction and lower bound of one-way INDEX problem, we hanve that $D^\parallel(\SumIndex) = \Omega(\sqrt{n})$.\\
+\end{proof}
+
+\exercises
+
+\begin{exercise}
+	Prove that $D^\parallel(\SumIndex) = o(n)$.
+\end{exercise}
+
+\begin{open}
+	The best bounds on the SMP complexity of the $\SumIndex$ function are
+	\[
+	\Omega(\sqrt{n}) \le D^\parallel(\SumIndex) \le O(n^{0.73}).
+	\]
+	Can you improve either the upper or the lower bound?
+\end{open}

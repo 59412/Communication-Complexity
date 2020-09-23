@@ -1,0 +1,83 @@
+\contentsline {chapter}{\tocchapter {Chapter}{1}{Deterministic communication complexity}}{1}% 
+\contentsline {section}{\tocsection {}{1}{Equality}}{2}% 
+\contentsline {section}{\tocsection {}{2}{General upper bound}}{3}% 
+\contentsline {section}{\tocsection {}{3}{Parity}}{3}% 
+\contentsline {section}{\tocsection {}{4}{Median}}{3}% 
+\contentsline {section}{\tocsection {}{5}{Rectangles and partition number}}{4}% 
+\contentsline {section}{\tocsection {}{6}{Partition bound}}{4}% 
+\contentsline {chapter}{\tocchapter {Chapter}{2}{More lower bound techniques}}{5}% 
+\contentsline {section}{\tocsection {}{1}{Fooling set bound}}{6}% 
+\contentsline {section}{\tocsection {}{2}{Equality II}}{6}% 
+\contentsline {section}{\tocsection {}{3}{Set disjointness}}{7}% 
+\contentsline {section}{\tocsection {}{4}{Inner product}}{7}% 
+\contentsline {section}{\tocsection {}{5}{Special case of the rectangle size bound}}{7}% 
+\contentsline {section}{\tocsection {}{6}{Inner product II}}{8}% 
+\contentsline {section}{\tocsection {}{7}{Rectangle size bound}}{8}% 
+\contentsline {section}{\tocsection {}{8}{Fooling sets and rectangle size bound}}{9}% 
+\contentsline {section}{\tocsection {}{9}{Log rank bound}}{9}% 
+\contentsline {section}{\tocsection {}{10}{Greater than}}{10}% 
+\contentsline {section}{\tocsection {}{11}{Tightness of the log rank bound}}{10}% 
+\contentsline {chapter}{\tocchapter {Chapter}{3}{Distributional communication complexity}}{13}% 
+\contentsline {section}{\tocsection {}{1}{Equality III}}{14}% 
+\contentsline {section}{\tocsection {}{2}{Uniform discrepancy}}{14}% 
+\contentsline {section}{\tocsection {}{3}{Uniform discrepancy bound}}{15}% 
+\contentsline {section}{\tocsection {}{4}{Inner product III}}{16}% 
+\contentsline {section}{\tocsection {}{5}{Distributional complexity}}{16}% 
+\contentsline {section}{\tocsection {}{6}{Discrepancy bound}}{17}% 
+\contentsline {section}{\tocsection {}{7}{Equality IV}}{18}% 
+\contentsline {section}{\tocsection {}{8}{Equality V}}{19}% 
+\contentsline {section}{\tocsection {}{9}{Corruption bound}}{20}% 
+\contentsline {section}{\tocsection {}{10}{Set Disjointness II}}{20}% 
+\contentsline {chapter}{\tocchapter {Chapter}{4}{Randomized communication complexity}}{23}% 
+\contentsline {section}{\tocsection {}{1}{Randomized and distributional complexity}}{24}% 
+\contentsline {section}{\tocsection {}{2}{Yao's minimax principle}}{25}% 
+\contentsline {section}{\tocsection {}{3}{Error reduction}}{25}% 
+\contentsline {section}{\tocsection {}{4}{Equality VI}}{26}% 
+\contentsline {section}{\tocsection {}{5}{Greater than II}}{26}% 
+\contentsline {section}{\tocsection {}{6}{Hamming distance}}{27}% 
+\contentsline {section}{\tocsection {}{7}{Private randomness}}{28}% 
+\contentsline {section}{\tocsection {}{8}{Newman's theorem}}{28}% 
+\contentsline {section}{\tocsection {}{9}{Private-coin randomness and determinism}}{29}% 
+\contentsline {section}{\tocsection {}{10}{Equality VII}}{29}% 
+\contentsline {chapter}{\tocchapter {Chapter}{5}{Information complexity}}{31}% 
+\contentsline {section}{\tocsection {}{1}{External information complexity}}{32}% 
+\contentsline {section}{\tocsection {}{2}{Public randomness can be eliminated}}{33}% 
+\contentsline {section}{\tocsection {}{3}{Equality VIII}}{34}% 
+\contentsline {section}{\tocsection {}{4}{And}}{34}% 
+\contentsline {section}{\tocsection {}{5}{Internal information complexity}}{35}% 
+\contentsline {section}{\tocsection {}{6}{Equality VIII}}{35}% 
+\contentsline {section}{\tocsection {}{7}{Direct sum}}{36}% 
+\contentsline {section}{\tocsection {}{8}{Direct sum for information complexity}}{36}% 
+\contentsline {section}{\tocsection {}{9}{Set disjointness III}}{37}% 
+\contentsline {chapter}{\tocchapter {Chapter}{6}{ One-way communication and simultaneous message passing}}{39}% 
+\contentsline {section}{\tocsection {}{1}{One-way communication complexity}}{40}% 
+\contentsline {section}{\tocsection {}{2}{Index function}}{40}% 
+\contentsline {section}{\tocsection {}{3}{One-way vs.\nonbreakingspace two-way communication complexity}}{41}% 
+\contentsline {section}{\tocsection {}{4}{Index II}}{41}% 
+\contentsline {section}{\tocsection {}{5}{Disjointness}}{42}% 
+\contentsline {section}{\tocsection {}{6}{Gap Hamming}}{42}% 
+\contentsline {section}{\tocsection {}{7}{Simultaneous message passing}}{43}% 
+\contentsline {section}{\tocsection {}{8}{Equality X}}{44}% 
+\contentsline {chapter}{\tocchapter {Chapter}{7}{Multiparty communication}}{45}% 
+\contentsline {section}{\tocsection {}{1}{Number-on-the-forehead model}}{46}% 
+\contentsline {section}{\tocsection {}{2}{Equality XI}}{46}% 
+\contentsline {section}{\tocsection {}{3}{Majority Inner Product}}{47}% 
+\contentsline {section}{\tocsection {}{4}{Generalized Inner Product}}{48}% 
+\contentsline {section}{\tocsection {}{5}{Cylinder intersections}}{49}% 
+\contentsline {section}{\tocsection {}{6}{Discrepancy}}{49}% 
+\contentsline {section}{\tocsection {}{7}{Generalized inner product II}}{50}% 
+\contentsline {section}{\tocsection {}{8}{Multiparty Simultaneous Message Passing}}{51}% 
+\contentsline {section}{\tocsection {}{9}{Sum Index}}{52}% 
+\contentsline {chapter}{\tocchapter {Chapter}{8}{Notes}}{53}% 
+\contentsline {section}{\tocsection {}{1}{General references}}{53}% 
+\contentsline {subsection}{\tocsubsection {}{}{Textbooks.}}{53}% 
+\contentsline {subsection}{\tocsubsection {}{}{Other books.}}{53}% 
+\contentsline {subsection}{\tocsubsection {}{}{Lecture notes.}}{53}% 
+\contentsline {subsection}{\tocsubsection {}{}{Surveys.}}{53}% 
+\contentsline {section}{\tocsection {}{2}{Deterministic communication complexity}}{53}% 
+\contentsline {section}{\tocsection {}{3}{More lower bound techniques}}{53}% 
+\contentsline {section}{\tocsection {}{4}{Distributional and randomized communication complexity}}{54}% 
+\contentsline {section}{\tocsection {}{5}{Information complexity}}{54}% 
+\contentsline {section}{\tocsection {}{6}{One-way communication and simultaneous message passing}}{54}% 
+\contentsline {section}{\tocsection {}{7}{Multiparty communication}}{55}% 
+\contentsline {chapter}{\tocchapter {Chapter}{}{Bibliography}}{57}% 

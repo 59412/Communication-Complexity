@@ -1,0 +1,342 @@
+\chapter[CH05]{Information complexity}
+
+Communication complexity is concerned mostly with the \emph{minimum number of bits} that Alice and Bob need to exchange in order to compute some function on
+their joint inputs. Information complexity, on the other hand, is concerned with
+the \emph{minimum amount of information} contained in the bits that Alice and
+Bob exchange to compute that function. Our first task is to formally define this notion of information. To do so, we will use standard definitions from information theory.
+\newpage
+\begin{definition}[Entropy]
+	The \emph{entropy} of a random variable $Z$ drawn from the probability distribution $\mu$ over a finite set $\calZ$ is
+	\[
+	H(Z) = - \sum_{z \in \calZ} \mu(z) \log_2 \mu(z).
+	\]
+	The entropy of a sequence of random variables $Z_1,Z_2,\ldots,Z_k$, denoted $H(Z_1\,Z_2\cdots Z_k)$ is the entropy of the random variable $Z = (Z_1,Z_2,\ldots,Z_k)$.
+\end{definition}
+
+\begin{definition}[Conditional entropy]
+	The \emph{conditional} entropy of $Z$ given another random variable $Z'$ is
+	\[
+	H(Z \mid Z') = H(Z\,Z') - H(Z').
+	\]
+\end{definition}
+
+\begin{definition}[Mutual information]
+	The \emph{mutual information} of two random variables $Z$ and $Z'$ is
+	\[
+	I( Z ; Z' ) = H(Z) - H(Z \mid Z').
+	\]
+	The \emph{conditional mutual information} of $Z$ and $Z'$ given $W$ is
+	\[
+	I( Z ; Z' \mid W) = H(Z \mid W) - H(Z \mid Z'\, W).
+	\]
+\end{definition}
+
+We use the following basic properties of entropy and mutual information.
+
+\begin{theorem}
+	Entropy satisfies the following properties:
+	\begin{description}
+		\item[Boundedness] For every $Z$ over a finite set $\calZ$, $0 \le H(Z) \le \log_2 |\calZ|$.
+		\item[Chain rule] $H(Z_1\,Z_2\cdots Z_k) = H(Z_1) + H(Z_2 \mid Z_1) + \cdots + H(Z_k \mid Z_1\cdots Z_{k-1})$.
+		\item[Subadditivity] $H(Z \mid Z') \le H(Z)$ and $H(Z\,Z') \le H(Z) + H(Z')$.
+	\end{description}
+	Mutual information satisfies the following properties:
+	\begin{description}
+		\item[Boundedness] $0 \le I(Z ; Z') \le \min\{ H(Z), H(Z') \}$.
+		\item[Chain rule] $I(Z_1\,Z_2 ; W) = I(Z_1 ; W) + H(Z_2 ; W \mid Z_1)$.
+		\item[Data processing inequality] Whenever $Z' = f(Z)$ is determined by $Z$, $I(Z' ; W) \le I(Z ; W)$.
+	\end{description}
+	
+\end{theorem}
+
+
+
+
+\section{External information complexity}
+
+Throughout this chapter, we will consider randomized protocols $\Pi$ that have access to both public- and private-coin randomness. 
+
+\begin{definition}[Transcript]
+	The \emph{transcript} of a protocol $\Pi$ on some input $(x,y) \in \calX \times \calY$, which we will denote by
+	\[
+	\Gamma_{x,y}^\Pi
+	\]
+	is a bit string that includes (i) the public-coin random string $R$ used by Alice and Bob and (ii) the sequence of bits that they exchange. 
+\end{definition}
+
+The first natural notion of information of a protocol that we will study is the amount of information that an external observer learns about Alice and Bob's input $(x,y)$ by seeing the transcript $\Gamma_{x,y}^\Pi$ of their communication protocol.
+
+\begin{definition}[External information cost]
+	The \emph{external information cost} of a randomized protocol $\Pi$ over the distribution $\mu$ on $\calX \times \calY$ is
+	\[
+	\icostext_\mu(\Pi) = I\big( X\,Y ; \Gamma_{X,Y}^\Pi \big)
+	\]
+	where $(X,Y) \sim \mu$.
+\end{definition}
+
+\begin{definition}[External information complexity]
+	The \emph{$\epsilon$-error external information complexity} of the function $f : \calX \times \calY \to \{0,1\}$ with respect to the distribution $\mu$ is
+	\[
+	\ICext_{\mu,\epsilon}(f) = \inf_{\pi} \icostext_\mu(\pi)
+	\]
+	with the infimum taken over all randomized protocols that compute $f$ with error at most $\epsilon$.\footnote{Note that the error of a randomized protocol is still defined to be its maximum error probability over \emph{any} input in $\calX \times \calY$; it is \emph{not} the expected error over an input drawn from $\mu$.}
+\end{definition}
+
+The external information complexity of a function gives a lower bound on its randomized communication complexity.
+
+\begin{theorem}
+	For every function $f : \calX \times \calY \to \{0,1\}$ and every distribution $\mu$ on $\calX \times \calY$,
+	\[
+	\ICext_{\mu,\epsilon}(f) \le R_\epsilon(f).
+	\]
+\end{theorem}
+
+\begin{proof}
+	By boundedness of mutual information, $0 \le I(Z ; Z') \le \min\{ H(Z), H(Z') \}$, thus for any $\icostext_\mu(\Pi) = I\big( X\,Y ; \Gamma_{X,Y}^\Pi \big)$, we have that $\icostext_\mu(\Pi) \leq \min\{ H(X\,Y), H(\Gamma_{X,Y}^\Pi) \}$.\\
+	\\
+	Since $H(\Gamma_{X,Y}^\Pi) \leq |\Gamma_{X,Y}^\Pi|$ by boundedness of entropy, we have $\icostext_\mu(\Pi) \leq |\Gamma_{X,Y}^\Pi|$.\\
+	\\
+	And since the size of $|\Gamma_{X,Y}^\Pi|$ is the total bits exchanged by the protocol, we have that $\icostext_\mu(\Pi) \leq R_\epsilon(f)$ for any protocol $\pi$. Thus $\ICext_{\mu,\epsilon}(f) \le R_\epsilon(f)$.
+\end{proof}
+
+
+
+\section{Public randomness can be eliminated}
+
+When designing protocols to obtain upper bounds on the information complexity of functions, it is convenient to work in the framework where Alice and Bob can use both public- and private-coin randomness. For lower bounds, however, it is useful to note that without loss of generality we can consider protocols that use only private randomness.
+
+\begin{theorem}
+	For every function $f : \calX \times \calY \to \{0,1\}$, every distribution $\mu$ over $\calX \times \calY$, and every $0 \le \epsilon \le \frac12$,
+	\[
+	\ICext_{\mu,\epsilon}(f) = \inf_{\pi} \icostext_\mu(\pi)
+	\]
+	even when the infimum is taken only over private-coin randomized protocols that compute $f$ with error at most $\epsilon$.
+\end{theorem}
+
+\begin{proof}
+	Consider the case where only private randomness is allowed, then any private-coin protocol $\pi$ can simulate public randomness by sending the private random bits over. In other words, all private random bits produced must be included inside the transcript comparing to public coin protocols. \\
+	\\
+	However, since we assume the random bits are independent of the protocols inputs $XY$, sending the random bits won't reveal any information about either $X$ or $Y$, thus it does not increase the external information cost of the protocol.\\
+	\\
+	Since restricting to private randomness does not increase the information cost of any protocol, we still have $\ICext_{\mu,\epsilon}(f) = \inf_{\pi} \icostext_\mu(\pi)$.
+\end{proof}
+
+
+
+\section{Equality VIII}
+
+External information complexity can be used to give a simple proof of the $\Omega(n)$ lower bound for the $0$-error randomized communication complexity of the equality function.
+
+\begin{theorem}
+	Let $\mu$ be the uniform distribution on the set $\{(x,x) : x \in \{0,1\}^n\}$. The $0$-error information complexity of $\Eq : \{0,1\}^n \times \{0,1\}^n \to \{0,1\}$ with respect to $\mu$ is
+	\[
+	\ICext_{\mu,0}(\Eq) = n.
+	\]
+\end{theorem}
+
+\begin{proof}
+	$\ICext_{\mu,0}(\Eq) = \inf_{\pi} I\big( X\,Y ; \Gamma_{X,Y}^\Pi \big) = \inf_{\pi} H(XY) - H(XY|\Gamma_{X,Y}^\Pi \big)$\\
+	\\
+	Now note that for any different pair of $(x,x)$ and $(y,y)$, they must use distinct transcripts if the protocol $\mu$ calculates EQUALITY with $0$ error probability: \\
+	\\ 
+	Otherwise $(x,x)$ and $(y,y)$ will be on the same leave of the protocol which implies $(x,y) and (y,x)$ are on the same leave. This contradicts with $\pi$'s $0$ error probability. \\
+	\\
+	Since we have a distinct transcript for each pair of $(x,x)$, we can get the value of $XY$ from the transcript as $XY$ is uniformly distributed over ${(x,x): x \in {0,1}^n}$. In other words, $H(XY|\Gamma_{X,Y}^\Pi \big) = 0$.\\
+	\\
+	Thus $\ICext_{\mu,0}(\Eq) = \inf_{\pi} H(XY) = - \sum \mu(z)\log_2\mu(z) = - \sum \frac1{2^n}\log_2\frac1{2^n} = n$
+\end{proof}
+
+
+\section{And}
+
+Let $\textsc{And} : \{0,1\} \times \{0,1\} \to \{0,1\}$ be the and function $\textsc{And}(x,y) = x \wedge y$ that takes the value $1$ if and only if $x = y = 1$.
+
+\begin{theorem}
+	For every distribution $\mu$ on $\{0,1\} \times \{0,1\}$,
+	\[
+	\ICext_{\mu,0}(\textsc{And}) \le \log_2 3.
+	\]
+	Furthermore, this bound is tight when $\mu(0,1) = \mu(1,0) = \mu(1,1) = \frac13$.
+\end{theorem}
+
+\begin{proof}
+	Think of a protocol where :\\
+	\\
+	-Alice sends Bob her bit, and Bob only send his bit back only if Alice sent $1$.\\
+	-Alice and Bob calculate the result of AND respectively \\
+	\\
+	It is clear that there are only three possibilities, thus the protocol only has $3$ leaves. To represent these leaves, we will only need three different transcripts since there are also no random bits. In other words, for this protocol, $|\Gamma_{X,Y}^\Pi \big| = 3$ \\
+	\\
+	Now $\ICext_{\mu,0}(\textsc{And}) = \inf_{\pi} I\big( X\,Y ; \Gamma_{X,Y}^\Pi \big) \le H(\Gamma_{X,Y}^\Pi \big) \le log_2|\Gamma_{X,Y}^\Pi \big| = log_23$.\\
+	\\
+	Furthermore, if $\mu(0,1) = \mu(1,0) = \mu(1,1) = \frac13$, \\
+	\\
+	$\ICext_{\mu,0}(\textsc{And}) = H(XY)$ by similar from EQUALITY VII\\
+	\\
+	$= -3\cdot\frac13\log_2\frac13 = \log_23$
+\end{proof}
+
+
+
+\section{Internal information complexity}
+
+Another natural notion of information of a protocol is the amount of information that Alice and Bob learn about each other's inputs by running their communication protocol.
+
+\begin{definition}[Internal information cost]
+	The \emph{internal information cost} of a randomized protocol $\Pi$ over the distribution $\mu$ on $\calX \times \calY$ is
+	\[
+	\icostint_\mu(\Pi) = I\big( X ; \Gamma_{X,Y}^\Pi|Y\big) + I\big( Y ; \Gamma_{X,Y}^\Pi|X\big).
+	\]
+	where $(X,Y) \sim \mu$.
+\end{definition}
+
+\begin{definition}[Internal information complexity]
+	The \emph{$\epsilon$-error internal information complexity} of the function $f : \calX \times \calY \to \{0,1\}$ with respect to the distribution $\mu$ is
+	\[
+	\ICint_{\mu,\epsilon}(f) = \inf_{\pi} \icostint_\mu(\pi)
+	\]
+	with the infimum taken over all 0randomized protocols that compute $f$ with error at most $\epsilon$.
+\end{definition}
+
+The internal information complexity of a function gives a lower bound on its external information complexity (and therefore on its randomized communication complexity as well).
+
+\begin{theorem}
+	For every function $f : \calX \times \calY \to \{0,1\}$, every distribution $\mu$ on $\calX \times \calY$, and every $0 \le \epsilon \le \frac12$,
+	\[
+	\ICint_{\mu,\epsilon}(f) \le \ICext_{\mu,\epsilon}(f).
+	\]
+\end{theorem}
+
+\begin{proof}
+	Let $\Pi$ be a protocol that computes $f$ with error $\leq \epsilon$ and $\Gamma_{X,Y}^\Pi = (M_1M_2...M_k,R)$ without loss of generality.\\
+	\\
+	$\ICint_{\mu,\epsilon}(f) = I(X;\Gamma_{X,Y}^\Pi|Y)+I(Y;\Gamma_{X,Y}^\Pi|X)$\\
+	$=I(X;M_1M_2...M_kR|Y)+I(Y;M_1M_2...M_kR|Y)$\\
+	$=I(X;M_1M_2...M_k|YR)+I(Y;M_1M_2...M_k|YR)$\\ 
+	\\
+	$I(X;M_1M_2...M_k|YR)=\sum_i I(X;M_i|M_1M_2...M_{i-1}RY)$\\
+	$=\sum_{i,sent by Alice} I(X;M_i|M_1M_2...M_{i-1}RY)+\sum_{i,sent by Bob} I(X;M_i|M_1M_2...M_{i-1}RY)$\\
+	$=\sum_{i,sent by Alice} I(X;M_i|M_1M_2...M_{i-1}RY)+0$\\
+	$\leq \sum_{i,sent by Alice} I(XY;M_i|M_1M_2...M_{i-1}R)$\\
+	\\
+	Similarly, \\
+	$I(Y;M_1M_2...M_k|XR) \leq \sum_{i,sent by Bob} I(XY;M_i|M_1M_2...M_{i-1}R)$\\
+	\\
+	Thus $\ICint_{\mu,\epsilon}(f) \leq \sum_i I(XY;M_i|M_1M_2...M_{i-1}R) = I(XY;M_1M_2...M_kR) = I(XY;\Gamma_{X,Y}^\Pi) = \ICext_{\mu,\epsilon}(f)$
+\end{proof}
+
+
+
+\section{Equality VIII}
+
+The internal information complexity of a function can be much smaller than its external information complexity, as the following example shows.
+
+\begin{theorem}
+	For every distribution $\mu$ over $\{0,1\}^n \times \{0,1\}^n$, the $0$-error information complexity of $\Eq : \{0,1\}^n \times \{0,1\}^n \to \{0,1\}$ is 
+	\[
+	\ICint_{\mu,0}(\Eq) = O(1).
+	\]
+\end{theorem}
+
+\begin{proof}
+	Consider the following protocol:\\
+	\\
+	-Alice and Bob chose $n$ linearly independent vectors $r_1,\ldots,r_n \in \{0,1\}^n$ publicly.\\
+	-Alice send Bob a bit which is the inner product of $r_i$ and $X$.\\
+	-Bob calculates the inner product of $r_i$ and $Y$, compare the bit and return the result to Alice.\\
+	-If Bob sent 0, both Alice and Bob terminate. Otherwise Alice sends next inner product. If all $n$ inner products were sent, Alice and Bob return 1.\\
+	\\
+	Since all $n$ vectors are linearly independent, they form a basis and this gives us $0$ error probability.\\
+	\\
+	Now we calculate the internal information complexity by two cases:\\
+	\\
+	1. if $X=Y$, then both $I\big( X ; \Gamma_{X,Y}^\Pi|Y\big)$ and $I\big( Y ; \Gamma_{X,Y}^\Pi|X\big)$ gives a value of 0 since $X$ and $Y$ decides each other if we know $X=Y$
+	2. if $X \neq Y$, then it is unlikely that Alice and Bob exchange too many bits: \\
+	\\
+	Since $X \neq Y$, for at least one $r_i$ we'll have different inner products. \\
+	\\
+	The probability of going into $i$th round is $\frac{2^{n-i+1}-1}{2^n-1}\leq2^{-i+1}$. So the expected number of rounds will be  less than $\sum_{i=1}^{n}2^{-i+1}=O(1)$. And since we exchange 2 bits each round, the exchanged bits are at most $O(1)$. So $\ICint_{\mu,0}(\Eq) = O(1)$.
+\end{proof}
+
+\bigskip
+\noindent \emph{Hint.} Consider a protocol where Alice and Bob use their public randomness to select $n$ linearly independent vectors $r_1,\ldots,r_n \in \{0,1\}^n$.
+
+
+
+\section{Direct sum}
+
+Given a function $f : \calX \times \calY \to \{0,1\}$, define $f^k : \calX^k \times \calY^k \to \{0,1\}^n$ to be the function where
+\[
+f^n(x^{(1)},\ldots,x^{(k)},y^{(1)},\ldots,y^{(k)}) = \big( f(x^{(1)},y^{(1)}), \ldots f(x^{(k)}, y^{(k)})\big).
+\]
+This corresponds to the setting where Alice and Bob must compute the value of $f$ on $n$ different pairs of inputs instead of just $1$.
+
+It might seem obvious that the complexity of computing $f^k$ is always $k$ times the complexity of computing $f$, but this is false in general! One counter-example is given by the equality function. Since $R_\epsilon(\Eq) = O(\log \frac1\epsilon)$, we have that $R_{2^{-\sqrt{k}}}(\Eq) = \sqrt{k}$ and so we might expect that $R_{2^{-\sqrt{k}}}(\Eq^k) = k^{3/2}$. In fact, the true randomized complexity of this function is much smaller.
+
+\begin{theorem}
+	$R_{2^{-\sqrt{k}}}(\Eq^k) = O(k)$.
+\end{theorem}
+
+
+\section{Direct sum for information complexity}
+
+One of the main advantages of working with internal information complexity is that in this setting every function \emph{does} satisfy the intuition that computing $k$ copies of a function is exactly $k$ times harder than computing a single copy of it.
+\begin{theorem}
+	For every function $f : \calX \times \calY \to \{0,1\}$ and every $k \ge 1$,
+	\[
+	\ICint_{\mu,0}(f^k) = k \cdot \ICint_{\mu,0}(f).
+	\]
+\end{theorem}
+
+\begin{proof}
+	Prove inequalities in both directions:\\
+	\\
+	($\leq$) Simply repeat the function $f$ for $k$ times.\\
+	\\
+	($\ge$) Say we have a protocol $\Pi$ for $f^k$, we need to design a protocol $\Pi$' for $f$.\\
+	\\
+	$Pub:\ X_1...X_{i-1}, Y_{i+1}...Y_k$\\
+	$Priv:\ X_{i+1}...X_k, Y_1...Y_{i-1}$\\
+	\\
+	$I(Y;\Gamma^{\Pi'}|X) \leq I(Y_i;\Gamma^{\Pi}_{X_{i+1}...X_k}|i,X_{[i-1]},X,Y_{i+1},...,Y_k)$\\
+	$=I(Y_i;\Gamma^{\Pi}|i,X_{[k]},Y_{i+1},...,Y_k)$\\
+	$=\frac1k\sum_{j=1}^{k}I(Y_i;\Gamma^{\Pi}|[i=j],X_{[k]},Y_{i+1},...,Y_k)$\\
+	$=\frac1k\sum_{j=1}^{k}I(Y_j;\Gamma^{\Pi}|X_{[k]},Y_{j+1},...,Y_k)$\\
+	$=\frac1kI(Y;\Gamma^{\Pi}|X)$\\
+	$=\frac1k\ICint_{\mu,0}(f^k)$\\
+\end{proof}
+
+
+
+\section{Set disjointness III}
+
+It is possible to obtain tight bounds on the internal information complexity of the \textsc{And} function. These tight bounds have been used to obtain \emph{exact} bounds on the communication complexity of the set disjointness function. To establish the tight asymptotic bound on its randomized communication complexity, however, all we need is the following result.
+
+\begin{lemma}
+	Let $\mu$ be the distribution on $\{0,1\} \times \{0,1\}$ defined by $\mu(0,0) = \mu(0,1) = \mu(1,0) = \frac13$.
+	For every $\epsilon > 0$, there is a constant $c_\epsilon > 0$ for which
+	\[
+	\ICint_{\mu,\epsilon}(\textsc{And}) = c_\epsilon.
+	\]
+\end{lemma}
+
+This result and (extensions of) the direct sum property of internal information complexity can be used to bound the randomized communication complexity of the set disjointness function.
+
+\begin{theorem}
+	For every (small enough) $\epsilon \ge 0$, 
+	\[
+	\R_\epsilon(\Disj) = \Omega(n).
+	\]
+\end{theorem}
+
+\begin{proof}
+	Solve the DISJ problem using previous theorem:\\
+	\\
+	Say we have a protocol $\Pi$ that solves DISJ, then we can solve AND problem with it as well since DISJ can be reduced to $n$ copies of AND problem.\\
+	\\
+	First say we have $i$ selected from $[n]$ uniformly at random, and $x_1\dots x_{i-1}$, $y_{i+1}\dots y_k$ selected from $\mu$.\\
+	\\
+	$\ICint(\textsc{And}) = \ICint(\Disj)/n = c_\epsilon$\\
+	$\ICint(\Disj) = nc_\epsilon$\\ 
+	Then $R_\epsilon(\Disj) \ge \ICint(\Disj) = \Omega(n)$
+\end{proof}

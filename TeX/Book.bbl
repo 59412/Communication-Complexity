@@ -1,0 +1,280 @@
+\newcommand{\etalchar}[1]{$^{#1}$}
+\begin{thebibliography}{BGPW13}
+
+\bibitem[AB09]{AroraB09}
+Sanjeev Arora and Boaz Barak.
+\newblock {\em Computational Complexity - {A} Modern Approach}.
+\newblock Cambridge University Press, 2009.
+
+\bibitem[BFS86]{BabaiFS86}
+L{\'{a}}szl{\'{o}} Babai, Peter Frankl, and Janos Simon.
+\newblock Complexity classes in communication complexity theory.
+\newblock In {\em Symposium on Foundations of Computer Science}, pages
+  337--347, 1986.
+
+\bibitem[BGPW13]{Braverman13}
+Mark Braverman, Ankit Garg, Denis Pankratov, and Omri Weinstein.
+\newblock From information to exact communication.
+\newblock In {\em Proceedings of the forty-fifth annual ACM symposium on Theory
+  of computing}, pages 151--160. ACM, 2013.
+
+\bibitem[BJKS04]{BarYossefJKS04}
+Ziv Bar{-}Yossef, T.~S. Jayram, Ravi Kumar, and D.~Sivakumar.
+\newblock An information statistics approach to data stream and communication
+  complexity.
+\newblock {\em J. Comput. Syst. Sci.}, 68(4):702--732, 2004.
+
+\bibitem[BK97]{BabaiK97}
+L{\'{a}}szl{\'{o}} Babai and Peter~G. Kimmel.
+\newblock Randomized simultaneous messages: Solution of a problem of yao in
+  communication complexity.
+\newblock In {\em {IEEE} Conference on Computational Complexity}, pages
+  239--246, 1997.
+
+\bibitem[BKL95]{BabaiKL95}
+L{\'{a}}szl{\'{o}} Babai, Peter~G. Kimmel, and Satyanarayana~V. Lokam.
+\newblock Simultaneous messages vs. communication.
+\newblock In {\em {STACS}}, pages 361--372, 1995.
+
+\bibitem[BNS92]{BabaiNS92}
+L{\'{a}}szl{\'{o}} Babai, Noam Nisan, and Mario Szegedy.
+\newblock Multiparty protocols, pseudorandom generators for logspace, and
+  time-space trade-offs.
+\newblock {\em J. Comput. Syst. Sci.}, 45(2):204--232, 1992.
+
+\bibitem[Bra04]{Brassard04}
+Gilles Brassard.
+\newblock Quantum communication complexity: {A} survey.
+\newblock In {\em {IEEE} International Symposium on Multiple-Valued Logic
+  {(ISMVL} 2004)}, page~56, 2004.
+
+\bibitem[Bra15]{Braverman15}
+Mark Braverman.
+\newblock Interactive information complexity.
+\newblock {\em SIAM Journal on Computing}, 44(6):1698--1739, 2015.
+
+\bibitem[CFL83]{ChandraFL83b}
+Ashok~K. Chandra, Merrick~L. Furst, and Richard~J. Lipton.
+\newblock Multi-party protocols.
+\newblock In {\em {ACM} Symposium on Theory of Computing}, pages 94--99, 1983.
+
+\bibitem[CG85]{ChorG85}
+Benny Chor and Oded Goldreich.
+\newblock Unbiased bits from sources of weak randomness and probabilistic
+  communication complexity.
+\newblock In {\em Symposium on Foundations of Computer Science}, pages
+  429--442, 1985.
+
+\bibitem[Cha01]{Chazelle01}
+Bernard Chazelle.
+\newblock {\em The discrepancy method - randomness and complexity}.
+\newblock Cambridge University Press, 2001.
+
+\bibitem[CP10]{ChattopadhyayP10}
+Arkadev Chattopadhyay and Toniann Pitassi.
+\newblock The story of set disjointness.
+\newblock {\em {SIGACT} News}, 41(3):59--85, 2010.
+
+\bibitem[CR12]{ChakrabartiR12}
+Amit Chakrabarti and Oded Regev.
+\newblock An optimal lower bound on the communication complexity of
+  gap-hamming-distance.
+\newblock {\em {SIAM} J. Comput.}, 41(5):1299--1317, 2012.
+
+\bibitem[CSWY01]{ChakrabartiSWY01}
+Amit Chakrabarti, Yaoyun Shi, Anthony Wirth, and Andrew~Chi{-}Chih Yao.
+\newblock Informational complexity and the direct sum problem for simultaneous
+  message complexity.
+\newblock In {\em Symposium on Foundations of Computer Science ({FOCS} 2001)},
+  pages 270--278, 2001.
+
+\bibitem[CT06]{CoverT06}
+Thomas~M. Cover and Joy~A. Thomas.
+\newblock {\em Elements of information theory {(2.} ed.)}.
+\newblock Wiley, 2006.
+
+\bibitem[DW02]{deWolf02}
+Ronald De~Wolf.
+\newblock Quantum communication and complexity.
+\newblock {\em Theoretical computer science}, 287(1):337--353, 2002.
+
+\bibitem[GKR16]{GanorKR16}
+Anat Ganor, Gillat Kol, and Ran Raz.
+\newblock Exponential separation of information and communication for boolean
+  functions.
+\newblock {\em J. {ACM}}, 63(5):46:1--46:31, 2016.
+
+\bibitem[Gro94]{Grolmusz94}
+Vince Grolmusz.
+\newblock The {BNS} lower bound for multi-party protocols in nearly optimal.
+\newblock {\em Inf. Comput.}, 112(1):51--54, 1994.
+
+\bibitem[Hat16]{Hatami16}
+Hamed Hatami.
+\newblock Introduction to communication and information complexity, 2016.
+\newblock Lecture notes.
+\newblock URL: \url{https://www.cs.mcgill.ca/~hatami/comp760-W2016/}.
+
+\bibitem[IW03]{IndykW03}
+Piotr Indyk and David~P. Woodruff.
+\newblock Tight lower bounds for the distinct elements problem.
+\newblock In {\em Foundations of Computer Science ({FOCS} 2003)}, pages
+  283--288, 2003.
+
+\bibitem[Jay10]{Jayram10}
+T.S. Jayram.
+\newblock Information complexity: A tutorial.
+\newblock In {\em {ACM} Symposium on Principles of Database Systems (PODS
+  '10)}, pages 159--168, 2010.
+
+\bibitem[Juk12]{Jukna12}
+Stasys Jukna.
+\newblock {\em Boolean Function Complexity - Advances and Frontiers}, volume~27
+  of {\em Algorithms and combinatorics}.
+\newblock Springer, 2012.
+
+\bibitem[Kla00]{Klauck00}
+Hartmut Klauck.
+\newblock Quantum communication complexity.
+\newblock In {\em Satelite Workshops of the International Colloquium on
+  Automata, Languages and Programming ({ICALP} Workshops 2000)}, pages
+  241--252, 2000.
+
+\bibitem[KLL{\etalchar{+}}15]{Kerenidis15}
+Iordanis Kerenidis, Sophie Laplante, Virginie Lerays, J{\'e}r{\'e}mie Roland,
+  and David Xiao.
+\newblock Lower bounds on information complexity via zero-communication
+  protocols and applications.
+\newblock {\em SIAM Journal on Computing}, 44(5):1550--1572, 2015.
+
+\bibitem[KN97]{KushilevitzN97}
+Eyal Kushilevitz and Noam Nisan.
+\newblock {\em Communication complexity}.
+\newblock Cambridge University Press, 1997.
+
+\bibitem[KNR99]{KremerNR99}
+Ilan Kremer, Noam Nisan, and Dana Ron.
+\newblock On randomized one-round communication complexity.
+\newblock {\em Computational Complexity}, 8(1):21--49, 1999.
+
+\bibitem[KS92]{KalyanasundaramS92}
+Bala Kalyanasundaram and Georg Schnitger.
+\newblock The probabilistic communication complexity of set intersection.
+\newblock {\em {SIAM} J. Discrete Math.}, 5(4):545--557, 1992.
+
+\bibitem[Lok09]{Lokam09}
+Satyanarayana~V. Lokam.
+\newblock Complexity lower bounds using linear algebra.
+\newblock {\em Foundations and Trends in Theoretical Computer Science},
+  4(1-2):1--155, 2009.
+
+\bibitem[Lov89]{Lovasz89}
+L{\'a}szl{\'o} Lov{\'a}sz.
+\newblock Communication complexity: a survey.
+\newblock Technical Report TR-204-89, Princeton University, 1989.
+\newblock URL: \url{https://www.cs.princeton.edu/research/techreps/TR-204-89}.
+
+\bibitem[LS81]{LiptonS81}
+Richard~J. Lipton and Robert Sedgewick.
+\newblock Lower bounds for {VLSI}.
+\newblock In {\em {ACM} Symposium on Theory of Computing}, pages 300--307,
+  1981.
+
+\bibitem[LS09]{LeeS09}
+Troy Lee and Adi Shraibman.
+\newblock Lower bounds in communication complexity.
+\newblock {\em Foundations and Trends in Theoretical Computer Science},
+  3(4):263--398, 2009.
+
+\bibitem[MS82]{MehlhornS82}
+Kurt Mehlhorn and Erik~Meineche Schmidt.
+\newblock Las vegas is better than determinism in {VLSI} and distributed
+  computing.
+\newblock In {\em {ACM} Symposium on Theory of Computing}, pages 330--337,
+  1982.
+
+\bibitem[New91]{Newman91}
+Ilan Newman.
+\newblock Private vs. common random bits in communication complexity.
+\newblock {\em Information Processing Letters}, 39(2):67--71, 1991.
+
+\bibitem[NS96]{NewmanS96}
+Ilan Newman and Mario Szegedy.
+\newblock Public vs. private coin flips in one round communication games.
+\newblock In {\em {ACM} Symposium on the Theory of Computing}, pages 561--570,
+  1996.
+
+\bibitem[NW93]{NisanW93}
+Noam Nisan and Avi Wigderson.
+\newblock Rounds in communication complexity revisited.
+\newblock {\em {SIAM} J. Comput.}, 22(1):211--219, 1993.
+
+\bibitem[Pit14]{Pitassi14}
+Toniann Pitassi.
+\newblock Communication complexity: Applications and new directions, 2014.
+\newblock Lecture notes.
+\newblock URL:
+  \url{https://www.cs.toronto.edu/~toni/Courses/CommComplexity2014/CS2429.html}.
+
+\bibitem[PS84]{PapadimitriouS84}
+Christos~H. Papadimitriou and Michael Sipser.
+\newblock Communication complexity.
+\newblock {\em J. Comput. Syst. Sci.}, 28(2):260--269, 1984.
+
+\bibitem[Raz00]{Raz00}
+Ran Raz.
+\newblock Circuit and communication complexity, 2000.
+\newblock Lecture notes 4--8 in IAS Summer School.
+\newblock URL:
+  \url{http://www.wisdom.weizmann.ac.il/~ranraz/lecturenotes/index.html}.
+
+\bibitem[Rou16]{Roughgarden16}
+Tim Roughgarden.
+\newblock Communication complexity (for algorithm designers).
+\newblock {\em Foundations and Trends in Theoretical Computer Science},
+  11(3-4):217--404, 2016.
+
+\bibitem[RY18]{RaoYehudayoff18}
+Anup Rao and Amir Yehudayoff.
+\newblock Communication complexity.
+\newblock Manuscript, 2018.
+\newblock URL: \url{https://homes.cs.washington.edu/~anuprao/pubs/book.pdf}.
+
+\bibitem[She12a]{Sherstov12}
+Alexander~A. Sherstov.
+\newblock Communication complexity, 2012.
+\newblock Lecture notes.
+\newblock URL: \url{http://web.cs.ucla.edu/~sherstov/teaching/2012-winter/}.
+
+\bibitem[She12b]{Sherstov12ghd}
+Alexander~A. Sherstov.
+\newblock The communication complexity of gap hamming distance.
+\newblock {\em Theory of Computing}, 8(1):197--208, 2012.
+
+\bibitem[She14]{Sherstov14}
+Alexander~A. Sherstov.
+\newblock Communication complexity theory: Thirty-five years of set
+  disjointness.
+\newblock In {\em Mathematical Foundations of Computer Science ({MFCS} 2014)},
+  pages 24--43, 2014.
+
+\bibitem[Vid13]{Vidick13}
+Thomas Vidick.
+\newblock A concentration inequality for the overlap of a vector on a large
+  set, with application to the communication complexity of the
+  gap-hamming-distance problem.
+\newblock {\em Chicago J. Theor. Comput. Sci.}, 2013, 2013.
+
+\bibitem[Yao79]{Yao79}
+Andrew~Chi{-}Chih Yao.
+\newblock Some complexity questions related to distributive computing.
+\newblock In {\em {ACM} Symposium on Theory of Computing}, pages 209--213,
+  1979.
+
+\bibitem[Yao83]{Yao83}
+Andrew~Chi{-}Chih Yao.
+\newblock Lower bounds by probabilistic arguments.
+\newblock In {\em Symposium on Foundations of Computer Science}, pages
+  420--428, 1983.
+
+\end{thebibliography}
